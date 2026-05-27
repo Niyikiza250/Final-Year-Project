@@ -3,7 +3,11 @@ import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import type { IncomingMessage, ServerResponse } from 'http'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const ACCHIEVEMENT_DIR = path.resolve('public/acchievement')
 const SYSTEM_SETTINGS_DIR = path.resolve('public/system-settings')
@@ -137,7 +141,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': '/src',
+      '@': path.resolve(__dirname, 'src'),
     },
   },
 })
