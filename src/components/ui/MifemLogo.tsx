@@ -16,7 +16,7 @@ const sizeMap = {
   xl: { icon: 56, text: 'text-3xl sm:text-4xl', tagline: 'text-xs sm:text-sm' },
 };
 
-const UPLOADS_LOGO = '/uploads/MIFEM_logo.png';
+const UPLOADS_LOGO = '/upload/MIFEM_logo.png';
 
 export const MifemLogo: React.FC<MifemLogoProps> = ({ className, iconOnly = false, size = 'md' }) => {
   const { t } = useTranslation();
