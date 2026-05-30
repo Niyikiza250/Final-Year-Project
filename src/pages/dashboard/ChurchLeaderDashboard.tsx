@@ -28,10 +28,10 @@ export const ChurchLeaderDashboard: React.FC = () => {
     <div className="space-y-4">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <ChurchKPI title={t('churchLeaderDashboard.baptizedMembers')} value={t('churchLeaderDashboard.registered')} desc={t('churchLeaderDashboard.kigaliCentral')} icon={<Users className="text-sda-blue" />} />
-        <ChurchKPI title={t('churchLeaderDashboard.ssClassAttendance')} value={t('churchLeaderDashboard.checkedIn')} desc={t('churchLeaderDashboard.lastSabbath')} icon={<UserCheck className="text-sda-gold" />} />
-        <ChurchKPI title={t('churchLeaderDashboard.visitorsQuarter')} value={t('churchLeaderDashboard.guests')} desc={t('churchLeaderDashboard.registeredKiosk')} icon={<HeartHandshake className="text-indigo-600" />} />
-        <ChurchKPI title={t('churchLeaderDashboard.ministryGroups')} value={t('churchLeaderDashboard.smallGroups')} desc={t('churchLeaderDashboard.activeWeekly')} icon={<Award className="text-green-600" />} />
+        <ChurchKPI title={'Baptized Members'} value={'850 Registered'} desc={'Kigali Central Church'} icon={<Users className="text-sda-blue" />} />
+        <ChurchKPI title={'SS Class Attendance'} value={'680 Checked In'} desc={'Last Sabbath session'} icon={<UserCheck className="text-sda-gold" />} />
+        <ChurchKPI title={'Visitors This Quarter'} value={'65 Guests'} desc={'Registered at lobby kiosk'} icon={<HeartHandshake className="text-indigo-600" />} />
+        <ChurchKPI title={'Ministry Groups'} value={'12 Small Groups'} desc={'Active weekly assemblies'} icon={<Award className="text-green-600" />} />
       </div>
 
       {/* Main Grid */}
@@ -40,8 +40,8 @@ export const ChurchLeaderDashboard: React.FC = () => {
         {/* Check-in breakdown pie chart */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div>
-            <h3 className="font-extrabold text-sm text-slate-800 dark:text-white">{t('churchLeaderDashboard.checkinBreakdown')}</h3>
-            <p className="text-[10px] text-slate-400 font-medium">{t('churchLeaderDashboard.sabbathTracking')}</p>
+            <h3 className="font-extrabold text-sm text-slate-800 dark:text-white">{'Check-in Session Breakdown'}</h3>
+            <p className="text-[10px] text-slate-400 font-medium">{'Sabbath digital session tracking methods'}</p>
           </div>
           
           <div className="h-[180px] my-3">
@@ -64,7 +64,7 @@ export const ChurchLeaderDashboard: React.FC = () => {
                   <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: COLORS[index] }} />
                   {item.name}
                 </div>
-                <span className="font-bold text-slate-800 dark:text-white">{item.value} {t('churchLeaderDashboard.members')}</span>
+                <span className="font-bold text-slate-800 dark:text-white">{item.value} {'members'}</span>
               </div>
             ))}
           </div>
@@ -72,11 +72,11 @@ export const ChurchLeaderDashboard: React.FC = () => {
 
         {/* Quick Actions Panel */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
-          <h3 className="font-extrabold text-sm text-slate-800 dark:text-white mb-4">{t('churchLeaderDashboard.localAdminPanel')}</h3>
+          <h3 className="font-extrabold text-sm text-slate-800 dark:text-white mb-4">{'Local Administrator Panel'}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
-            <LocalQuickButton label={t('churchLeaderDashboard.newCheckin')} icon={<Play size={16} />} color="bg-sda-blue text-white hover:bg-sda-blue-dark" />
-            <LocalQuickButton label={t('churchLeaderDashboard.addMember')} icon={<Plus size={16} />} color="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" />
-            <LocalQuickButton label={t('churchLeaderDashboard.newEvent')} icon={<Calendar size={16} />} color="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" />
+            <LocalQuickButton label={'New Check-in'} icon={<Play size={16} />} color="bg-sda-blue text-white hover:bg-sda-blue-dark" />
+            <LocalQuickButton label={'Add Member'} icon={<Plus size={16} />} color="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" />
+            <LocalQuickButton label={'New Event'} icon={<Calendar size={16} />} color="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" />
           </div>
         </div>
 
@@ -85,7 +85,7 @@ export const ChurchLeaderDashboard: React.FC = () => {
           <div>
             <h3 className="font-extrabold text-sm text-slate-800 dark:text-white mb-3 flex items-center gap-1.5">
               <Megaphone size={16} className="text-sda-blue dark:text-sda-gold" />
-              {t('churchLeaderDashboard.hierarchicalAnnouncements')}
+              {'Hierarchical Announcements'}
             </h3>
             <div className="space-y-3 text-xs leading-relaxed">
               {isLoading ? (
@@ -94,7 +94,7 @@ export const ChurchLeaderDashboard: React.FC = () => {
                   <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded w-1/2"></div>
                 </div>
               ) : latestAnnouncements.length === 0 ? (
-                <p className="text-slate-400 italic">{t('churchLeaderDashboard.noRecentAnnouncements')}</p>
+                <p className="text-slate-400 italic">{'No recent announcements.'}</p>
               ) : (
                 latestAnnouncements.map((a, idx) => (
                   <div key={a.id} className={`border-l-2 pl-3 py-0.5 ${
@@ -112,7 +112,7 @@ export const ChurchLeaderDashboard: React.FC = () => {
             </div>
           </div>
           <Link to={ROUTES.COMMUNICATION} className="w-full mt-4 flex items-center justify-center gap-1 text-[11px] font-bold text-sda-blue dark:text-sda-gold hover:underline">
-            {t('churchLeaderDashboard.viewAllAnnouncements')} <ArrowRight size={14} />
+            {'View All Announcements'} <ArrowRight size={14} />
           </Link>
         </div>
       </div>

@@ -1,114 +1,102 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { 
-  Users, MapPin, Church, TrendingUp, Calendar, ArrowUpRight, 
-  FileText, Activity, AlertCircle 
-} from 'lucide-react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { LeaderAchievementForm } from '@/components/leader/LeaderAchievementForm';
+import { Users, Map, Church, Calendar, Megaphone, FileText } from 'lucide-react';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
+import { useAuthStore } from '@/store/useAuthStore';
+import { MOCK_FIELDS } from '@/data/enterpriseMocks';
+import { FIELD_REPORTS } from '@/data/fieldReports';
 
-const WEEKLY_TREND = [
-  { week: 'W1', attendance: 82 },
-  { week: 'W2', attendance: 84 },
-  { week: 'W3', attendance: 81 },
-  { week: 'W4', attendance: 85 },
-  { week: 'W5', attendance: 84 },
+const DISTRICT_DATA = [
+  { district: 'Kigali City', churches: 12, members: 8400 },
+  { district: 'Bugesera', churches: 8, members: 5200 },
+  { district: 'Rwamagana', churches: 6, members: 3800 },
+  { district: 'Gicumbi', churches: 7, members: 4100 },
+  { district: 'Musanze', churches: 5, members: 2900 },
 ];
 
 export const FieldLeaderDashboard: React.FC = () => {
-  const { t } = useTranslation();
+  const { user } = useAuthStore();
+
+  const fieldId = user?.fieldId || 'FR1';
+  const report = FIELD_REPORTS[fieldId] || FIELD_REPORTS.FR1;
+  const fieldName = MOCK_FIELDS.find((f) => f.id === fieldId)?.name || 'Field';
+
+  const statsCards = [
+    { label: 'Total Districts', value: String(report.districts), icon: <Map className="text-sda-blue" />, desc: 'Active districts' },
+    { label: 'Total Churches', value: String(report.churches), icon: <Church className="text-sda-gold" />, desc: 'Organized churches' },
+    { label: 'Total Members', value: report.membership, icon: <Users className="text-green-600" />, desc: `Total membership (${fieldName})` },
+    { label: 'Total Baptisms', value: report.baptisms, icon: <Calendar className="text-indigo-600" />, desc: `+${report.baptismsDelta.replace('+', '')} this year` },
+  ];
+
   return (
     <div className="space-y-4">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <FieldKPI title={t('fieldLeaderDashboard.fieldMembership')} value="12,800" desc={t('fieldLeaderDashboard.centralRegion')} icon={<Users className="text-sda-blue" />} />
-        <FieldKPI title={t('fieldLeaderDashboard.oversightZones')} value={t('fieldLeaderDashboard.oversightZonesValue')} desc={t('fieldLeaderDashboard.zonesReporting')} icon={<MapPin className="text-sda-gold" />} />
-        <FieldKPI title={t('fieldLeaderDashboard.localChurches')} value={t('fieldLeaderDashboard.organized')} desc={t('fieldLeaderDashboard.activeInMis')} icon={<Church className="text-indigo-600" />} />
-        <FieldKPI title={t('fieldLeaderDashboard.avgAttendanceRate')} value="84%" desc={t('fieldLeaderDashboard.deviationWeekly')} icon={<TrendingUp className="text-green-600" />} />
+      {/* Field Header */}
+      <div className="flex items-center gap-3">
+        <div className="p-2.5 bg-sda-blue/10 rounded-xl">
+          <Map size={20} className="text-sda-blue dark:text-sda-gold" />
+        </div>
+        <div>
+          <h1 className="text-lg font-extrabold text-slate-800 dark:text-white">{fieldName}</h1>
+          <p className="text-[10px] text-slate-400 font-medium">Field Leader Dashboard</p>
+        </div>
       </div>
 
-      {/* Grid of Chart & Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Attendance Trend Line Chart */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h3 className="font-extrabold text-sm text-slate-800 dark:text-white">{t('fieldLeaderDashboard.regionalAttendanceTrend')}</h3>
-              <p className="text-[10px] text-slate-400 font-medium">{t('fieldLeaderDashboard.avgWeeklyCheckin')}</p>
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {statsCards.map((stat, i) => (
+          <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-xs font-bold text-slate-400">{stat.label}</span>
+              <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-xl">{stat.icon}</div>
             </div>
-            <span className="text-[10px] font-bold bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">
-              {t('fieldLeaderDashboard.stableWeekly')}
-            </span>
+            <div className="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight">{stat.value}</div>
+            <p className="text-[10px] text-slate-400 font-medium mt-1">{stat.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* District Comparison Chart */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h3 className="font-extrabold text-sm text-slate-800 dark:text-white">{'District Metrics'}</h3>
+              <p className="text-[10px] text-slate-400 font-medium">{'Members & churches by district'}</p>
+            </div>
           </div>
           <div className="h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={WEEKLY_TREND}>
+              <BarChart data={DISTRICT_DATA}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="week" tick={{fontSize: 9, fill: '#64748b'}} axisLine={false} tickLine={false} />
-                <YAxis domain={[70, 100]} tick={{fontSize: 9, fill: '#64748b'}} axisLine={false} tickLine={false} />
+                <XAxis dataKey="district" tick={{ fontSize: 9, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fill: '#64748b' }} axisLine={false} tickLine={false} />
                 <Tooltip />
-                <Line type="monotone" dataKey="attendance" name={t('fieldLeaderDashboard.checkinPercent')} stroke="#003087" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-              </LineChart>
+                <Bar dataKey="churches" name="Churches" fill="#003087" radius={[4, 4, 0, 0]} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Zone Auditing List */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
-          <div>
-            <h3 className="font-extrabold text-sm text-slate-800 dark:text-white mb-3">{t('fieldLeaderDashboard.zoneComplianceAuditing')}</h3>
-            <div className="space-y-3.5">
-              <ZoneComplianceRow zone={t('fieldLeaderDashboard.zoneA')} status="submitted" time={t('fieldLeaderDashboard.hourAgo')} />
-              <ZoneComplianceRow zone={t('fieldLeaderDashboard.zoneB')} status="submitted" time={t('fieldLeaderDashboard.hoursAgo')} />
-              <ZoneComplianceRow zone={t('fieldLeaderDashboard.zoneC')} status="delayed" time={t('fieldLeaderDashboard.overdueTime')} />
-              <ZoneComplianceRow zone={t('fieldLeaderDashboard.zoneD')} status="submitted" time={t('fieldLeaderDashboard.yesterday')} />
-            </div>
+        {/* Quick Actions */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
+          <h3 className="font-extrabold text-sm text-slate-800 dark:text-white mb-4">{'Quick Actions'}</h3>
+          <div className="space-y-3">
+            <Link to={ROUTES.DISTRICTS} className="flex items-center gap-3 p-3 rounded-xl bg-sda-blue text-white text-xs font-bold hover:opacity-90 transition-all">
+              <Map size={16} /> {'Manage Districts'}
+            </Link>
+            <Link to={ROUTES.EVENTS} className="flex items-center gap-3 p-3 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:opacity-90 transition-all">
+              <Calendar size={16} /> {'Create Events'}
+            </Link>
+            <Link to={ROUTES.ANNOUNCEMENTS} className="flex items-center gap-3 p-3 rounded-xl bg-amber-600 text-white text-xs font-bold hover:opacity-90 transition-all">
+              <Megaphone size={16} /> {'Send Announcements'}
+            </Link>
+            <Link to={ROUTES.REPORTS} className="flex items-center gap-3 p-3 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:opacity-90 transition-all">
+              <FileText size={16} /> {'View Reports'}
+            </Link>
           </div>
-          <button className="w-full mt-4 bg-sda-blue hover:bg-sda-blue-dark dark:bg-sda-gold dark:hover:bg-sda-gold-light dark:text-sda-blue font-bold text-white text-xs py-2.5 rounded-xl cursor-pointer">
-            {t('fieldLeaderDashboard.exportRegionalReport')}
-          </button>
         </div>
-      </div>
-
-      <LeaderAchievementForm />
-    </div>
-  );
-};
-
-const FieldKPI = ({ title, value, desc, icon }: any) => (
-  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs relative overflow-hidden group">
-    <div className="flex justify-between items-start mb-2">
-      <span className="text-xs font-bold text-slate-400">{title}</span>
-      <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-xl group-hover:scale-105 transition-transform duration-300">
-        {icon}
-      </div>
-    </div>
-    <div className="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight">{value}</div>
-    <p className="text-[10px] text-slate-400 font-medium mt-1">{desc}</p>
-  </div>
-);
-
-const ZoneComplianceRow = ({ zone, status, time }: any) => {
-  const { t } = useTranslation();
-  const isSubmitted = status === 'submitted';
-  return (
-    <div className="flex items-center justify-between text-xs border-b border-slate-50 dark:border-slate-850 pb-2.5">
-      <div>
-        <p className="font-bold text-slate-800 dark:text-slate-200">{zone}</p>
-        <span className="text-[9px] text-slate-400 font-semibold">{t('fieldLeaderDashboard.weeklyReport')}</span>
-      </div>
-      <div className="text-right">
-        {isSubmitted ? (
-          <span className="text-[9px] font-extrabold bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
-            {t('fieldLeaderDashboard.submittedStatus')}
-          </span>
-        ) : (
-          <span className="text-[9px] font-extrabold bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse flex items-center gap-1">
-            <AlertCircle size={10} /> {t('fieldLeaderDashboard.overdueStatus')}
-          </span>
-        )}
-        <p className="text-[9px] text-slate-400 mt-0.5">{time}</p>
       </div>
     </div>
   );

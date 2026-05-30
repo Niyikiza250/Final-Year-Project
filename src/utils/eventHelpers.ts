@@ -2,7 +2,7 @@ import { Event, EventCategory, EventStatus } from '@/types/event';
 
 export const CATEGORY_LABELS: Record<EventCategory, string> = {
   WORSHIP: 'Worship',
-  CONFERENCE: 'Conference',
+  CONFERENCE: 'Field',
   COMMUNITY: 'Community',
   YOUTH: 'Youth',
   TRAINING: 'Training',

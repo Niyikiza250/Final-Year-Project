@@ -9,7 +9,7 @@ import { ROUTES } from '@/constants/routes';
 import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
 import { MOCK_MANAGED_USERS } from '@/data/enterpriseMocks';
 
-const STAFF_ROLES = ['ADMIN', 'UNION_LEADER', 'FIELD_LEADER', 'ZONE_LEADER', 'CHURCH_LEADER', 'MANAGER'];
+const STAFF_ROLES: string[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER'];
 
 interface LoginFormValues {
   email: string;
@@ -64,8 +64,10 @@ const Login: React.FC = () => {
       role: mockUser.role,
       unionId: mockUser.unionId || 'UM1',
       fieldId: mockUser.fieldId,
-      zoneId: mockUser.zoneId,
+      districtId: mockUser.districtId,
       churchId: mockUser.churchId,
+      ministryId: mockUser.ministryId,
+      volunteerId: mockUser.volunteerId,
     }, 'fake-jwt-token');
 
     navigate(ROUTES.DASHBOARD);
@@ -154,27 +156,35 @@ const Login: React.FC = () => {
         <div className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
           <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/30">
             <span>admin@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">Admin</span>
+            <span className="text-sda-blue dark:text-sda-gold">Super Admin</span>
           </div>
           <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">
             <span>secretary@mifem.rw</span>
             <span className="text-sda-blue dark:text-sda-gold">Union Leader</span>
           </div>
           <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/30">
-            <span>field-leader@mifem.rw</span>
+            <span>conference-leader@mifem.rw</span>
             <span className="text-sda-blue dark:text-sda-gold">Field Leader</span>
           </div>
           <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">
-            <span>zone-leader@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">Zone Leader</span>
+            <span>district-leader@mifem.rw</span>
+            <span className="text-sda-blue dark:text-sda-gold">District Leader</span>
           </div>
           <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/30">
             <span>church-leader@mifem.rw</span>
             <span className="text-sda-blue dark:text-sda-gold">Church Leader</span>
           </div>
           <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">
+            <span>ministry-leader@mifem.rw</span>
+            <span className="text-sda-blue dark:text-sda-gold">Ministry Leader</span>
+          </div>
+          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/30">
             <span>member@mifem.rw</span>
             <span className="text-sda-blue dark:text-sda-gold">Member</span>
+          </div>
+          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">
+            <span>volunteer@mifem.rw</span>
+            <span className="text-sda-blue dark:text-sda-gold">Volunteer</span>
           </div>
         </div>
         <div className="px-4 py-2 bg-amber-50 dark:bg-amber-950/20 border-t border-amber-200 dark:border-amber-900/30 flex items-center gap-1.5">

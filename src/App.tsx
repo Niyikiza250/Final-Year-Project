@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import AppRouter from '@/routes/AppRouter';
 import { ToastContainer } from '@/components/ui/ToastContainer';
+import { FaviconUpdater } from '@/components/ui/FaviconUpdater';
 import { useAchievementAdminStore } from '@/store/useAchievementAdminStore';
 
 const queryClient = new QueryClient({
@@ -26,6 +27,7 @@ const App: React.FC = () => {
       <ThemeProvider>
         <AppRouter />
         <ToastContainer />
+        <FaviconUpdater />
       </ThemeProvider>
     </QueryClientProvider>
   );

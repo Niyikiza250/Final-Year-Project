@@ -1,4 +1,4 @@
-import { Member } from '@/types/member';
+import { Member, MemberChangeRequest } from '@/types/member';
 import { Event } from '@/types/event';
 
 export const MOCK_EVENTS: Event[] = [
@@ -70,7 +70,7 @@ export const MOCK_EVENTS: Event[] = [
     id: 'e4',
     title: 'Union Evangelism Conference',
     description: 'Annual evangelism planning and outreach training for all fields.',
-    category: 'CONFERENCE',
+    category: 'Field',
     status: 'UPCOMING',
     startDate: '2026-07-22T08:00:00',
     endDate: '2026-07-24T16:00:00',
@@ -147,6 +147,7 @@ export const MOCK_MEMBERS: Member[] = [
     zoneName: 'Kigali City Zone',
     fieldName: 'Central Rwanda Field',
     unionName: 'Rwanda Union Mission',
+    sabbathClass: 'Class A',
     baptismDate: '2010-05-15',
     joinDate: '2010-06-01',
     address: 'KN 45 St, Kigali',
@@ -166,6 +167,7 @@ export const MOCK_MEMBERS: Member[] = [
     zoneName: 'Rubavu Zone',
     fieldName: 'West Rwanda Field',
     unionName: 'Rwanda Union Mission',
+    sabbathClass: 'Class C',
     baptismDate: '2015-08-22',
     joinDate: '2015-09-10',
     address: 'Rubavu, Gisenyi',
@@ -185,6 +187,7 @@ export const MOCK_MEMBERS: Member[] = [
     zoneName: 'Huye Zone',
     fieldName: 'South Rwanda Field',
     unionName: 'Rwanda Union Mission',
+    sabbathClass: 'Class B',
     joinDate: '2005-01-15',
     address: 'Huye, Butare',
     gender: 'MALE',
@@ -203,6 +206,7 @@ export const MOCK_MEMBERS: Member[] = [
     zoneName: 'Kigali City Zone',
     fieldName: 'Central Rwanda Field',
     unionName: 'Rwanda Union Mission',
+    sabbathClass: 'Class A',
     baptismDate: '2018-12-10',
     joinDate: '2019-01-05',
     address: 'Remera, Kigali',
@@ -223,10 +227,51 @@ export const MOCK_MEMBERS: Member[] = [
     zoneName: i % 2 === 0 ? 'Kigali City Zone' : 'Rubavu Zone',
     fieldName: i % 2 === 0 ? 'Central Rwanda Field' : 'West Rwanda Field',
     unionName: 'Rwanda Union Mission',
+    sabbathClass: i % 3 === 0 ? 'Class A' : i % 3 === 1 ? 'Class B' : 'Class C',
     joinDate: '2020-01-01',
     address: 'Kigali, Rwanda',
     gender: i % 2 === 0 ? 'MALE' as const : 'FEMALE' as const,
     dateOfBirth: '1990-01-01',
     activities: [],
   })),
+];
+
+export const MOCK_CHANGE_REQUESTS: MemberChangeRequest[] = [
+  {
+    id: 'cr1',
+    memberId: '1',
+    type: 'UPDATE',
+    submittedBy: 'u6',
+    submittedByRole: 'MINISTRY_LEADER',
+    submittedByEmail: 'grace.k@example.com',
+    submittedAt: '2026-05-28T10:30:00',
+    status: 'PENDING',
+    changes: {
+      sabbathClass: 'Class B',
+      phone: '+250 788 000 111',
+    },
+  },
+  {
+    id: 'cr2',
+    type: 'CREATE',
+    submittedBy: 'u6',
+    submittedByRole: 'MINISTRY_LEADER',
+    submittedByEmail: 'grace.k@example.com',
+    submittedAt: '2026-05-29T14:00:00',
+    status: 'PENDING',
+    changes: {
+      firstName: 'David',
+      lastName: 'Habarugira',
+      email: 'david.h@example.com',
+      phone: '+250 788 000 222',
+      gender: 'MALE',
+      dateOfBirth: '1990-06-15',
+      role: 'MEMBER',
+      status: 'ACTIVE',
+      churchName: 'Kigali Central Church',
+      fieldName: 'Central Rwanda Field',
+      zoneName: 'Kigali City Zone',
+      address: 'Kacyiru, Kigali',
+    },
+  },
 ];

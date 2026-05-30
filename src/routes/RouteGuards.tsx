@@ -1,12 +1,32 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
-import { ROUTES } from '@/constants/routes';
+import { ROUTES, UserRole, canAccess } from '@/constants/routes';
 
 export const AdminRoute: React.FC = () => {
   const { user } = useAuthStore();
 
-  if (user?.role !== 'ADMIN') {
+  if (user?.role !== 'SUPER_ADMIN') {
+    return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
+  }
+
+  return <Outlet />;
+};
+
+export const RoleBasedRoute: React.FC<{ allowedRoles: UserRole[] }> = ({ allowedRoles }) => {
+  const { user } = useAuthStore();
+
+  if (!user || !allowedRoles.includes(user.role)) {
+    return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
+  }
+
+  return <Outlet />;
+};
+
+export const HigherAccessRoute: React.FC<{ minRole: UserRole }> = ({ minRole }) => {
+  const { user } = useAuthStore();
+
+  if (!user || !canAccess(user.role, minRole)) {
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
   }
 

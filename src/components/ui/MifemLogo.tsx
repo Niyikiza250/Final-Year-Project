@@ -10,10 +10,10 @@ interface MifemLogoProps {
 }
 
 const sizeMap = {
-  sm: { icon: 28, text: 'text-xs sm:text-lg', tagline: 'text-[7px] sm:text-[9px]' },
-  md: { icon: 40, text: 'text-xl sm:text-2xl', tagline: 'text-[9px] sm:text-[10px]' },
-  lg: { icon: 48, text: 'text-2xl sm:text-3xl', tagline: 'text-[10px] sm:text-xs' },
-  xl: { icon: 56, text: 'text-3xl sm:text-4xl', tagline: 'text-xs sm:text-sm' },
+  sm: { icon: 28, text: 'text-[10px] sm:text-xs', tagline: 'text-[6px] sm:text-[7px]' },
+  md: { icon: 40, text: 'text-xs sm:text-sm', tagline: 'text-[7px] sm:text-[8px]' },
+  lg: { icon: 48, text: 'text-sm sm:text-base', tagline: 'text-[8px] sm:text-[9px]' },
+  xl: { icon: 56, text: 'text-base sm:text-lg', tagline: 'text-[9px] sm:text-[10px]' },
 };
 
 const UPLOADS_LOGO = '/upload/MIFEM_logo.png';

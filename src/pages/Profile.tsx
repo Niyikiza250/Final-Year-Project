@@ -64,16 +64,20 @@ export const Profile: React.FC = () => {
   // Dynamic role info based on user.role
   const getRoleAssignment = () => {
     switch (user?.role) {
-      case 'ADMIN':
+      case 'SUPER_ADMIN':
         return { title: t('profile.roleAdminTitle'), details: t('profile.roleAdminDetail') };
       case 'UNION_LEADER':
         return { title: t('profile.roleUnionLeaderTitle'), details: t('profile.roleUnionLeaderDetail') };
       case 'FIELD_LEADER':
         return { title: t('profile.roleFieldLeaderTitle'), details: t('profile.roleFieldLeaderDetail') };
-      case 'ZONE_LEADER':
+      case 'DISTRICT_LEADER':
         return { title: t('profile.roleZoneLeaderTitle'), details: t('profile.roleZoneLeaderDetail') };
       case 'CHURCH_LEADER':
         return { title: t('profile.roleChurchLeaderTitle'), details: t('profile.roleChurchLeaderDetail') };
+      case 'MINISTRY_LEADER':
+        return { title: 'Ministry Leader', details: 'Manages ministry programs, volunteers, and events.' };
+      case 'VOLUNTEER':
+        return { title: 'Volunteer', details: 'Registered volunteer for ministry activities.' };
       case 'MEMBER':
       default:
         return { title: t('profile.roleMemberTitle'), details: t('profile.roleMemberDetail') };

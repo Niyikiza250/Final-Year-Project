@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useLogoStore } from '@/store/useLogoStore';
+import { useFaviconStore } from '@/store/useFaviconStore';
 import { useFontSizeStore } from '@/store/useFontSizeStore';
 import { usePhotoStore } from '@/store/usePhotoStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -21,11 +22,12 @@ export const Settings: React.FC = () => {
   const { user } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
   const { logoDataUrl, setLogo, removeLogo } = useLogoStore();
+  const { faviconDataUrl, setFavicon, removeFavicon } = useFaviconStore();
   const { fontSize, increaseFontSize, decreaseFontSize } = useFontSizeStore();
   const { addPhoto } = usePhotoStore();
   const navigate = useNavigate();
 
-  if (user?.role !== 'ADMIN') {
+  if (user?.role !== 'SUPER_ADMIN') {
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
   }
 
@@ -36,6 +38,18 @@ export const Settings: React.FC = () => {
     reader.onload = async (event) => {
       const dataUrl = event.target?.result as string;
       setLogo(dataUrl);
+      await addPhoto(file);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const dataUrl = event.target?.result as string;
+      setFavicon(dataUrl);
       await addPhoto(file);
     };
     reader.readAsDataURL(file);
@@ -283,6 +297,38 @@ export const Settings: React.FC = () => {
                     <button
                       type="button"
                       onClick={removeLogo}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 dark:border-red-900/50 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer"
+                    >
+                      <Trash2 size={14} />
+                      {t('settings.remove')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Favicon (Title logo) customization */}
+            <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{t('settings.faviconTitle')}</p>
+              <p className="text-[10px] text-slate-400 font-medium">{t('settings.faviconDesc')}</p>
+              <div className="mt-3 flex items-center gap-4">
+                <div className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-50 dark:bg-slate-800 flex items-center justify-center shrink-0">
+                  {faviconDataUrl ? (
+                    <img src={faviconDataUrl} alt={t('settings.customFaviconAlt')} className="w-full h-full object-contain" />
+                  ) : (
+                    <img src="/upload/mifem.png" alt={t('settings.customFaviconAlt')} className="w-full h-full object-contain" />
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <label className="cursor-pointer inline-flex items-center gap-1.5 rounded-xl bg-sda-blue px-4 py-2 text-xs font-bold text-white hover:bg-sda-blue-dark transition-all">
+                    <ImageUp size={14} />
+                    {faviconDataUrl ? t('settings.changeFavicon') : t('settings.uploadFavicon')}
+                    <input type="file" accept="image/*" onChange={handleFaviconUpload} className="hidden" />
+                  </label>
+                  {faviconDataUrl && (
+                    <button
+                      type="button"
+                      onClick={removeFavicon}
                       className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 dark:border-red-900/50 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer"
                     >
                       <Trash2 size={14} />

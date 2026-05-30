@@ -326,7 +326,7 @@ export const Header: React.FC<HeaderProps> = ({
                           <User size={14} className="text-slate-400" />
                           {t('nav.profile')}
                         </Link>
-                        {user?.role === 'ADMIN' && (
+                        {user?.role === 'SUPER_ADMIN' && (
                           <Link
                             to={ROUTES.SETTINGS}
                             onClick={() => setProfileDropdownOpen(false)}

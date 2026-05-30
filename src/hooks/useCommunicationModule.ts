@@ -4,12 +4,18 @@ import {
   MOCK_BULLETIN,
   MOCK_MESSAGES,
   MOCK_SMS_TEMPLATES,
+  MOCK_AUDIT_LOGS,
 } from '@/data/enterpriseMocks';
+import { useAuthStore } from '@/store/useAuthStore';
+import { canSenderTarget, ROLE_LABELS } from '@/utils/announcementPermissions';
+import type { Announcement, AnnouncementPriority, AnnouncementCategory, Attachment } from '@/types/communication';
+import type { UserRole } from '@/constants/routes';
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const keys = {
   announcements: ['comms', 'announcements'] as const,
+  reads: ['comms', 'reads'] as const,
   bulletin: ['comms', 'bulletin'] as const,
   messages: ['comms', 'messages'] as const,
   sms: ['comms', 'sms'] as const,
@@ -90,9 +96,6 @@ export function useSendInternalMessage() {
   });
 }
 
-import { useAuthStore } from '@/store/useAuthStore';
-import type { Announcement, AnnouncementPriority, AnnouncementCategory, Attachment } from '@/types/communication';
-
 export function useCreateAnnouncement() {
   const qc = useQueryClient();
   const { user } = useAuthStore();
@@ -102,17 +105,18 @@ export function useCreateAnnouncement() {
       body: string;
       priority: AnnouncementPriority;
       category: AnnouncementCategory;
+      targetRole: UserRole;
+      targetId?: string;
       scheduledAt?: string;
       attachments?: Attachment[];
     }) => {
       await delay(400);
       if (!user) throw new Error('Not authenticated');
+      if (!canSenderTarget(user.role as UserRole, payload.targetRole)) {
+        throw new Error('You are not allowed to send announcements to this role');
+      }
 
-      let targetAudience = 'Members';
-      if (user.role === 'UNION_LEADER') targetAudience = 'Field Leaders';
-      else if (user.role === 'FIELD_LEADER') targetAudience = 'Zone Leaders';
-      else if (user.role === 'ZONE_LEADER') targetAudience = 'Church Leaders';
-      else if (user.role === 'CHURCH_LEADER') targetAudience = 'Members';
+      const targetLabel = ROLE_LABELS[payload.targetRole] || payload.targetRole;
 
       const newAnnouncement: Announcement = {
         id: `an-${Date.now()}`,
@@ -124,15 +128,27 @@ export function useCreateAnnouncement() {
         scheduledAt: payload.scheduledAt,
         author: user.name || 'Leader',
         authorRole: user.role,
-        audience: targetAudience,
+        targetRole: payload.targetRole,
+        targetId: payload.targetId,
+        audience: targetLabel,
+        senderId: user.id,
         unionId: user.unionId,
         fieldId: user.fieldId,
-        zoneId: user.zoneId,
+        districtId: user.districtId,
         churchId: user.churchId,
+        ministryId: user.ministryId,
         attachments: payload.attachments,
       };
 
       MOCK_ANNOUNCEMENTS.unshift(newAnnouncement);
+      MOCK_AUDIT_LOGS.unshift({
+        id: `aud-${Date.now()}`,
+        actor: user.email || user.name || 'Unknown',
+        action: 'ANNOUNCEMENT_PUBLISHED',
+        target: newAnnouncement.id,
+        at: new Date().toISOString(),
+        severity: 'INFO',
+      });
       return newAnnouncement;
     },
     onSuccess: () => {
@@ -147,46 +163,114 @@ export function useHierarchicalAnnouncements() {
 
   const filtered = query.data?.filter((a) => {
     if (!user) return false;
-    
-    // Admins and Managers see everything
-    if (user.role === 'ADMIN' || user.role === 'MANAGER') return true;
+    if (user.role === 'SUPER_ADMIN') return true;
 
-    // Union Leader: sees what is sent in their Union, or created by them
-    if (user.role === 'UNION_LEADER') {
-      return a.unionId === user.unionId;
+    switch (user.role) {
+      case 'UNION_LEADER': {
+        const fromSelf = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
+        const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
+        const targetsMe = a.targetRole === 'UNION_LEADER';
+        return fromSelf || fromSuperAdmin || (targetsMe && a.unionId === user.unionId);
+      }
+      case 'FIELD_LEADER': {
+        const fromSelf = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
+        const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
+        const targetsMe = a.targetRole === 'FIELD_LEADER';
+        return fromSelf || fromUnion || fromSuperAdmin || (targetsMe && a.fieldId === user.fieldId);
+      }
+      case 'DISTRICT_LEADER': {
+        const fromSelf = a.authorRole === 'DISTRICT_LEADER' && a.districtId === user.districtId;
+        const fromConference = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
+        const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
+        const targetsMe = a.targetRole === 'DISTRICT_LEADER';
+        return fromSelf || fromConference || fromUnion || fromSuperAdmin || (targetsMe && a.districtId === user.districtId);
+      }
+      case 'CHURCH_LEADER': {
+        const fromSelf = a.authorRole === 'CHURCH_LEADER' && a.churchId === user.churchId;
+        const fromDistrict = a.authorRole === 'DISTRICT_LEADER' && a.districtId === user.districtId;
+        const fromConference = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
+        const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
+        return fromSelf || fromDistrict || fromConference || fromUnion || fromSuperAdmin;
+      }
+      case 'MINISTRY_LEADER': {
+        const fromSelf = a.authorRole === 'MINISTRY_LEADER' && a.churchId === user.churchId;
+        const fromChurch = a.authorRole === 'CHURCH_LEADER' && a.churchId === user.churchId;
+        const fromDistrict = a.authorRole === 'DISTRICT_LEADER' && a.districtId === user.districtId;
+        const fromConference = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
+        const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
+        return fromSelf || fromChurch || fromDistrict || fromConference || fromUnion || fromSuperAdmin;
+      }
+      case 'MEMBER': {
+        const isMine = a.churchId === user.churchId;
+        const fromLeader = a.authorRole === 'CHURCH_LEADER' || a.authorRole === 'MINISTRY_LEADER';
+        const fromUpper = ['DISTRICT_LEADER', 'FIELD_LEADER', 'UNION_LEADER', 'SUPER_ADMIN'].includes(a.authorRole);
+        return isMine && (fromLeader || fromUpper);
+      }
+      case 'VOLUNTEER': {
+        const isMyMinistry = a.ministryId && a.ministryId === user.ministryId;
+        const fromMinistry = a.authorRole === 'MINISTRY_LEADER';
+        const fromChurch = a.authorRole === 'CHURCH_LEADER' && a.churchId === user.churchId;
+        const fromUpper = ['DISTRICT_LEADER', 'FIELD_LEADER', 'UNION_LEADER', 'SUPER_ADMIN'].includes(a.authorRole);
+        return (isMyMinistry && fromMinistry) || fromChurch || fromUpper;
+      }
+      default:
+        return false;
     }
-
-    // Field Leader: sees announcements sent by Union Leaders in their Union, and their own
-    if (user.role === 'FIELD_LEADER') {
-      const isFromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
-      const isOwn = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
-      return isFromUnion || isOwn;
-    }
-
-    // Zone Leader: sees announcements sent by Field Leaders in their Field, and their own
-    if (user.role === 'ZONE_LEADER') {
-      const isFromField = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
-      const isOwn = a.authorRole === 'ZONE_LEADER' && a.zoneId === user.zoneId;
-      return isFromField || isOwn;
-    }
-
-    // Church Leader: sees announcements sent by Zone Leaders in their Zone, and their own
-    if (user.role === 'CHURCH_LEADER') {
-      const isFromZone = a.authorRole === 'ZONE_LEADER' && a.zoneId === user.zoneId;
-      const isOwn = a.authorRole === 'CHURCH_LEADER' && a.churchId === user.churchId;
-      return isFromZone || isOwn;
-    }
-
-    // Member: sees ONLY announcements sent by their Church Leader
-    if (user.role === 'MEMBER') {
-      return a.authorRole === 'CHURCH_LEADER' && a.churchId === user.churchId;
-    }
-
-    return false;
   }) || [];
 
   return {
     ...query,
     data: filtered,
   };
+}
+
+export function useMarkAnnouncementRead() {
+  const qc = useQueryClient();
+  const { user } = useAuthStore();
+  return useMutation({
+    mutationFn: async (announcementId: string) => {
+      await delay(100);
+      const a = MOCK_ANNOUNCEMENTS.find((x) => x.id === announcementId);
+      if (a) a.isRead = true;
+      if (user) {
+        MOCK_AUDIT_LOGS.unshift({
+          id: `aud-${Date.now()}`,
+          actor: user.email || user.name || 'Unknown',
+          action: 'ANNOUNCEMENT_READ',
+          target: announcementId,
+          at: new Date().toISOString(),
+          severity: 'INFO',
+        });
+      }
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.announcements }),
+  });
+}
+
+export function useDeleteAnnouncement() {
+  const qc = useQueryClient();
+  const { user } = useAuthStore();
+  return useMutation({
+    mutationFn: async (announcementId: string) => {
+      await delay(300);
+      const idx = MOCK_ANNOUNCEMENTS.findIndex((a) => a.id === announcementId);
+      if (idx === -1) throw new Error('Announcement not found');
+      MOCK_ANNOUNCEMENTS.splice(idx, 1);
+      if (user) {
+        MOCK_AUDIT_LOGS.unshift({
+          id: `aud-${Date.now()}`,
+          actor: user.email || user.name || 'Unknown',
+          action: 'ANNOUNCEMENT_DELETED',
+          target: announcementId,
+          at: new Date().toISOString(),
+          severity: 'INFO',
+        });
+      }
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.announcements }),
+  });
 }

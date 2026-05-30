@@ -24,13 +24,52 @@ export const ROUTES = {
   ACHIEVEMENTS: '/achievements',
   ADMIN_USERS: '/admin/users',
   FORCE_PASSWORD_CHANGE: '/change-password-force',
+  // New role-specific routes
+  FIELDS: '/fields',
+  DISTRICTS: '/districts',
+  CHURCHES: '/churches',
+  MINISTRY_ACTIVITIES: '/ministry-activities',
+  VOLUNTEERS: '/volunteers',
+  TASKS: '/tasks',
+  CALENDAR: '/calendar',
+  DOCUMENTS: '/documents',
+  PROGRAMS: '/programs',
+  PARTICIPATION_HISTORY: '/participation-history',
+  AUDIT_LOGS: '/audit-logs',
+  LOGIN_HISTORY: '/login-history',
+  ANNOUNCEMENTS: '/announcements',
+  NOTIFICATIONS: '/notifications',
+  SYSTEM_SETTINGS: '/system-settings',
+  MODULES: '/modules',
+  ANALYTICS: '/analytics',
+  ROLES_PERMISSIONS: '/roles-permissions',
+  UPLOADED_FILES: '/uploaded-files',
+  LANGUAGE_SETTINGS: '/language-settings',
+  CHURCH_LEADERS: '/church-leaders',
+  ACTIVITIES: '/activities',
 };
 
 export type UserRole =
-  | 'ADMIN'
-  | 'MANAGER'
+  | 'SUPER_ADMIN'
   | 'UNION_LEADER'
   | 'FIELD_LEADER'
-  | 'ZONE_LEADER'
+  | 'DISTRICT_LEADER'
   | 'CHURCH_LEADER'
-  | 'MEMBER';
+  | 'MINISTRY_LEADER'
+  | 'MEMBER'
+  | 'VOLUNTEER';
+
+export const ROLE_HIERARCHY: Record<UserRole, number> = {
+  SUPER_ADMIN: 0,
+  UNION_LEADER: 1,
+  FIELD_LEADER: 2,
+  DISTRICT_LEADER: 3,
+  CHURCH_LEADER: 4,
+  MINISTRY_LEADER: 5,
+  MEMBER: 6,
+  VOLUNTEER: 7,
+};
+
+export function canAccess(requesterRole: UserRole, targetRole: UserRole): boolean {
+  return ROLE_HIERARCHY[requesterRole] <= ROLE_HIERARCHY[targetRole];
+}

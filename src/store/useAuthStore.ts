@@ -15,8 +15,10 @@ export interface User {
   lastLogin?: string;
   unionId?: string;
   fieldId?: string;
-  zoneId?: string;
+  districtId?: string;
   churchId?: string;
+  ministryId?: string;
+  volunteerId?: string;
 }
 
 interface AuthState {
@@ -38,7 +40,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
-      excelImportAllowedRoles: ['ADMIN'],
+      excelImportAllowedRoles: ['SUPER_ADMIN'],
       login: (user, token) => {
         localStorage.setItem('token', token);
         set({ user, token, isAuthenticated: true });
@@ -73,7 +75,7 @@ export const useAuthStore = create<AuthState>()(
       },
       toggleExcelImportPermission: (role) => {
         set((state) => {
-          const current = state.excelImportAllowedRoles || ['ADMIN'];
+          const current = state.excelImportAllowedRoles || ['SUPER_ADMIN'];
           const updated = current.includes(role)
             ? current.filter((r) => r !== role)
             : [...current, role];

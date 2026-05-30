@@ -3,17 +3,18 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
-import { Bell, ShieldAlert, Sparkles } from 'lucide-react';
+import { Bell, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Dashboard role sub-components
-import { AdminDashboard } from './dashboard/AdminDashboard';
-import { ManagerDashboard } from './dashboard/ManagerDashboard';
+import { SuperAdminDashboard } from './dashboard/SuperAdminDashboard';
 import { UnionLeaderDashboard } from './dashboard/UnionLeaderDashboard';
 import { FieldLeaderDashboard } from './dashboard/FieldLeaderDashboard';
-import { ZoneLeaderDashboard } from './dashboard/ZoneLeaderDashboard';
+import { DistrictLeaderDashboard } from './dashboard/DistrictLeaderDashboard';
 import { ChurchLeaderDashboard } from './dashboard/ChurchLeaderDashboard';
+import { MinistryLeaderDashboard } from './dashboard/MinistryLeaderDashboard';
 import { MemberDashboard } from './dashboard/MemberDashboard';
+import { VolunteerDashboard } from './dashboard/VolunteerDashboard';
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -21,21 +22,23 @@ const Dashboard: React.FC = () => {
 
   const getDashboardComponent = () => {
     switch (user?.role) {
-      case 'ADMIN':
-        return <AdminDashboard />;
-      case 'MANAGER':
-        return <ManagerDashboard />;
+      case 'SUPER_ADMIN':
+        return <SuperAdminDashboard />;
       case 'UNION_LEADER':
         return <UnionLeaderDashboard />;
       case 'FIELD_LEADER':
         return <FieldLeaderDashboard />;
-      case 'ZONE_LEADER':
-        return <ZoneLeaderDashboard />;
+      case 'DISTRICT_LEADER':
+        return <DistrictLeaderDashboard />;
       case 'CHURCH_LEADER':
         return <ChurchLeaderDashboard />;
+      case 'MINISTRY_LEADER':
+        return <MinistryLeaderDashboard />;
       case 'MEMBER':
-      default:
         return <MemberDashboard />;
+      case 'VOLUNTEER':
+      default:
+        return <VolunteerDashboard />;
     }
   };
 

@@ -16,7 +16,10 @@ const MemberDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const isAdmin = user?.role === 'ADMIN';
+  const isAdmin = user?.role === 'SUPER_ADMIN';
+  const isChurchLeader = user?.role === 'CHURCH_LEADER';
+  const isMinistryLeader = user?.role === 'MINISTRY_LEADER';
+  const canEdit = isAdmin || isChurchLeader || isMinistryLeader;
   const { data: member, isLoading } = useMember(id || '');
 
   if (isLoading) {
@@ -52,7 +55,7 @@ const MemberDetails: React.FC = () => {
           <ArrowLeft size={18} className="mr-2" /> {t('member.backToDirectory')}
         </button>
         <div className="flex space-x-3">
-          {isAdmin && (
+          {canEdit && (
             <>
               <button 
                 onClick={() => navigate(ROUTES.MEMBER_EDIT.replace(':id', member.id))}
@@ -105,7 +108,11 @@ const MemberDetails: React.FC = () => {
             <div className="flex flex-wrap gap-4">
               <HeaderStat label={t('member.governanceRole')} value={getTranslatedRoleLabel(member.role, t)} icon={<Award />} />
               <HeaderStat label={t('member.localPlacement')} value={member.churchName} icon={<Church />} />
+              <HeaderStat label={t('member.filterZone')} value={member.zoneName} icon={<Map />} />
               <HeaderStat label={t('member.missionField')} value={member.fieldName} icon={<Map />} />
+              {member.sabbathClass && (
+                <HeaderStat label={t('member.filterClass')} value={member.sabbathClass} icon={<Calendar />} />
+              )}
             </div>
           </div>
         </div>

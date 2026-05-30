@@ -22,6 +22,7 @@ export interface Member {
   zoneName: string;
   fieldName: string;
   unionName: string;
+  sabbathClass?: string;
   baptismDate?: string;
   joinDate: string;
   address: string;
@@ -37,4 +38,20 @@ export interface MemberFilters {
   status?: MemberStatus;
   field?: string;
   church?: string;
+  sabbathClass?: string;
+}
+
+export interface MemberChangeRequest {
+  id: string;
+  memberId?: string;
+  type: 'CREATE' | 'UPDATE' | 'DELETE';
+  submittedBy: string;
+  submittedByRole: UserRole;
+  submittedByEmail: string;
+  submittedAt: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  changes: Partial<Member>;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  rejectionReason?: string;
 }

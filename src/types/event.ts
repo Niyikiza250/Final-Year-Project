@@ -2,7 +2,7 @@ import { UserRole } from '@/constants/routes';
 
 export type EventStatus = 'DRAFT' | 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
 
-export type EventCategory = 'WORSHIP' | 'CONFERENCE' | 'COMMUNITY' | 'YOUTH' | 'TRAINING' | 'OTHER';
+export type EventCategory = 'WORSHIP' | 'FIELD' | 'COMMUNITY' | 'YOUTH' | 'TRAINING' | 'OTHER';
 
 export interface TimelineEntry {
   id: string;

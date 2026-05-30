@@ -30,13 +30,13 @@ import {
 import { useAuthStore } from '@/store/useAuthStore';
 import { ROUTES } from '@/constants/routes';
 
-const ROLES: UserRole[] = ['ADMIN', 'MANAGER', 'UNION_LEADER', 'FIELD_LEADER', 'ZONE_LEADER', 'CHURCH_LEADER', 'MEMBER'];
+const ROLES: UserRole[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER', 'MEMBER', 'VOLUNTEER'];
 
 const UserManagement: React.FC = () => {
   const { t } = useTranslation();
   const { user: currentUser, excelImportAllowedRoles = ['ADMIN'], toggleExcelImportPermission } = useAuthStore();
 
-  if (currentUser?.role !== 'ADMIN') {
+  if (currentUser?.role !== 'SUPER_ADMIN') {
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
   }
   const { data: users, isLoading: lu } = useManagedUsers();
@@ -272,7 +272,7 @@ const UserManagement: React.FC = () => {
         </h3>
         <p className="text-[11px] text-slate-500">{t('admin.bulkRegistrationDesc')}</p>
         <div className="flex flex-wrap gap-4 pt-1">
-          {ROLES.filter(r => r !== 'ADMIN').map((role) => {
+          {ROLES.filter(r => r !== 'SUPER_ADMIN').map((role) => {
             const isAllowed = excelImportAllowedRoles.includes(role);
             return (
               <button

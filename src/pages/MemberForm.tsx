@@ -7,9 +7,10 @@ import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useMember } from '@/services/memberService';
+import { MOCK_CHANGE_REQUESTS } from '@/utils/mockData';
 import { 
   ArrowLeft, Save, Loader2, User, Church, MapPin, 
-  Calendar, Camera, Upload, X, Shield 
+  Calendar, Camera, Upload, X, Shield, Clock 
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -26,6 +27,7 @@ const memberSchema = (t: (key: string) => string) => z.object({
   churchName: z.string().min(1, t('member.validation.churchNameRequired')),
   fieldName: z.string().min(1, t('member.validation.fieldNameRequired')),
   zoneName: z.string().min(1, t('member.validation.zoneNameRequired')),
+  sabbathClass: z.string().optional(),
   address: z.string().min(1, t('member.validation.addressRequired')),
 });
 
@@ -37,8 +39,10 @@ const MemberForm: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const isEdit = !!id;
+  const canDirectEdit = user?.role === 'SUPER_ADMIN' || user?.role === 'CHURCH_LEADER';
+  const needsApproval = user?.role === 'MINISTRY_LEADER';
 
-  if (user?.role !== 'ADMIN') {
+  if (user?.role !== 'SUPER_ADMIN' && user?.role !== 'CHURCH_LEADER' && user?.role !== 'MINISTRY_LEADER') {
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
   }
   const { data: member, isLoading: isMemberLoading } = useMember(id || '');
@@ -64,6 +68,23 @@ const MemberForm: React.FC = () => {
   };
 
   const onSubmit = async (data: MemberFormValues) => {
+    if (needsApproval) {
+      const changeRequest = {
+        id: `cr-${Date.now()}`,
+        memberId: isEdit ? id : undefined,
+        type: isEdit ? ('UPDATE' as const) : ('CREATE' as const),
+        submittedBy: user?.id || '',
+        submittedByRole: 'MINISTRY_LEADER' as const,
+        submittedByEmail: user?.email || '',
+        submittedAt: new Date().toISOString(),
+        status: 'PENDING' as const,
+        changes: data as any,
+      };
+      MOCK_CHANGE_REQUESTS.push(changeRequest);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      navigate(ROUTES.MEMBERS);
+      return;
+    }
     console.log('Saving member:', data);
     await new Promise((resolve) => setTimeout(resolve, 1500));
     navigate(ROUTES.MEMBERS);
@@ -176,6 +197,7 @@ const MemberForm: React.FC = () => {
               <InputField label={t('member.formLocalChurch')} {...register('churchName')} error={errors.churchName?.message} />
               <InputField label={t('member.formZone')} {...register('zoneName')} error={errors.zoneName?.message} />
               <InputField label={t('member.formField')} {...register('fieldName')} error={errors.fieldName?.message} />
+              <InputField label={t('member.filterClass')} {...register('sabbathClass')} />
               <InputField label={t('member.formResidence')} {...register('address')} error={errors.address?.message} />
             </div>
           </Section>
@@ -196,8 +218,8 @@ const MemberForm: React.FC = () => {
               disabled={isSubmitting}
               className="bg-sda-blue hover:bg-sda-blue-dark text-white px-10 py-3.5 rounded-2xl shadow-xl shadow-sda-blue/20 flex items-center space-x-2 transition-all transform active:scale-95 disabled:opacity-50 font-bold"
             >
-              {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-              <span>{isEdit ? t('member.formSubmitUpdate') : t('member.formSubmitRegister')}</span>
+              {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : needsApproval ? <Clock size={20} /> : <Save size={20} />}
+              <span>{needsApproval ? (isEdit ? t('member.formSubmitForApproval') : t('member.formSubmitForApproval')) : (isEdit ? t('member.formSubmitUpdate') : t('member.formSubmitRegister'))}</span>
             </button>
           </div>
         </div>

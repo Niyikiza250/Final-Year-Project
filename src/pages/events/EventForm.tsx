@@ -46,7 +46,7 @@ const EventForm: React.FC = () => {
     return z.object({
       title: z.string().min(3, t('event.validation.titleMin')),
       description: z.string().min(10, t('event.validation.descriptionMin')),
-      category: z.enum(['WORSHIP', 'CONFERENCE', 'COMMUNITY', 'YOUTH', 'TRAINING', 'OTHER']),
+      category: z.enum(['WORSHIP', 'Field', 'COMMUNITY', 'YOUTH', 'TRAINING', 'OTHER']),
       status: z.enum(['DRAFT', 'UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED']),
       startDate: z.string().min(1, t('event.validation.startDateRequired')),
       endDate: z.string().min(1, t('event.validation.endDateRequired')),

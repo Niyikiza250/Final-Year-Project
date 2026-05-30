@@ -17,12 +17,25 @@ export interface Announcement {
   scheduledAt?: string;
   author: string;
   authorRole: string;
+  targetRole: string;
+  targetId?: string;
   audience: string;
+  senderId?: string;
   unionId?: string;
   fieldId?: string;
-  zoneId?: string;
+  districtId?: string;
   churchId?: string;
+  ministryId?: string;
   attachments?: Attachment[];
+  isRead?: boolean;
+}
+
+export interface AnnouncementRead {
+  id: string;
+  announcementId: string;
+  userId: string;
+  isRead: boolean;
+  readAt?: string;
 }
 
 export interface BulletinItem {

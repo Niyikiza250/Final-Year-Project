@@ -13,8 +13,11 @@ export interface ManagedUser {
   permissions: string[];
   unionId?: string;
   fieldId?: string;
-  zoneId?: string;
+  districtId?: string;
   churchId?: string;
+  ministryId?: string;
+  volunteerId?: string;
+  temporaryPasswordStatus?: boolean;
 }
 
 export interface AuditLogEntry {

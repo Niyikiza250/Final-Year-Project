@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { 
   UserCheck, Award, Calendar, Bell, ChevronRight, Bookmark, Megaphone, Settings,
   Pencil, Check, X
@@ -22,7 +21,6 @@ const ATTENDANCE_HISTORY = [
 ];
 
 export const MemberDashboard: React.FC = () => {
-  const { t } = useTranslation();
   const { data: announcements, isLoading } = useHierarchicalAnnouncements();
   const latestAnnouncements = announcements?.slice(0, 3) || [];
   const [activeMotto, setActiveMotto] = useState(0);
@@ -31,7 +29,7 @@ export const MemberDashboard: React.FC = () => {
   const user = useAuthStore((s) => s.user);
   const [selectedClassId, setSelectedClassId] = useState('');
 
-  const isAdmin = user?.role === 'ADMIN';
+  const isAdmin = user?.role === 'SUPER_ADMIN';
   const memberChurchId = user?.churchId ?? '';
   const memberChurch = MOCK_CHURCHES.find((c) => c.id === memberChurchId);
   const memberDistrict = memberChurch ? MOCK_DISTRICTS.find((d) => d.id === memberChurch.districtId) : null;
@@ -67,7 +65,7 @@ export const MemberDashboard: React.FC = () => {
             type="button"
             onClick={() => setAdminPanelOpen(true)}
             className="absolute top-3 right-3 z-20 p-2 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-sm transition-colors text-white/80 hover:text-white"
-            title={t('memberDashboard.adminManageCard')}
+            title={'Manage Blue Card'}
           >
             <Settings size={16} />
           </button>
@@ -76,13 +74,13 @@ export const MemberDashboard: React.FC = () => {
         <div className="relative z-10 grid gap-6 md:grid-cols-2 md:items-center">
           <div className="max-w-lg">
             <span className="text-[10px] font-extrabold uppercase tracking-widest bg-sda-gold/20 text-sda-gold-light px-2.5 py-1 rounded-full">
-              {memberChurch?.name ?? card?.congregationLabel ?? t('memberDashboard.churchName')}
+              {memberChurch?.name ?? card?.congregationLabel ?? 'Kigali Central Congregation'}
             </span>
             <h2 className="text-2xl font-extrabold mt-3 tracking-tight">
-              {card?.mainTitle ?? t('memberDashboard.activeSabbathFellowship')}
+              {card?.mainTitle ?? 'Active Sabbath Fellowship'}
             </h2>
             <p className="text-xs text-white/80 mt-1.5 leading-relaxed">
-              {card?.welcomeMessage ?? t('memberDashboard.welcomeMessage')}
+              {card?.welcomeMessage ?? 'Welcome to your member portal. Access local announcements, track your attendance, and discover upcoming small groups.'}
             </p>
           </div>
 
@@ -128,7 +126,7 @@ export const MemberDashboard: React.FC = () => {
                   </motion.div>
                 ) : (
                   <div className="absolute inset-0 flex flex-col justify-center">
-                    <p className="text-xs italic text-white/50">{t('memberDashboard.noMissionWords')}</p>
+                    <p className="text-xs italic text-white/50">{'No mission words yet. Admin can add them.'}</p>
                   </div>
                 )}
               </AnimatePresence>
@@ -139,7 +137,7 @@ export const MemberDashboard: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <MemberKPI title={t('memberDashboard.kpiAttendance')} value={t('memberDashboard.kpiAttendanceValue')} desc={t('memberDashboard.kpiAttendanceDesc')} icon={<UserCheck className="text-sda-blue" />} />
+        <MemberKPI title={'Personal Attendance'} value={'92%'} desc={'Checked in 11/12 Sabbaths'} icon={<UserCheck className="text-sda-blue" />} />
         <SabbathSchoolEditCard
           classOptions={classOptions}
           selectedClassId={selectedClassId}
@@ -147,8 +145,8 @@ export const MemberDashboard: React.FC = () => {
           churchName={memberChurch?.name ?? ''}
           districtName={memberDistrict?.name ?? ''}
         />
-        <MemberKPI title={t('memberDashboard.kpiMinistries')} value={t('memberDashboard.kpiMinistriesValue')} desc={t('memberDashboard.kpiMinistriesDesc')} icon={<Award className="text-indigo-600" />} />
-        <MemberKPI title={t('memberDashboard.kpiEvents')} value={t('memberDashboard.kpiEventsValue')} desc={t('memberDashboard.kpiEventsDesc')} icon={<Calendar className="text-green-600" />} />
+        <MemberKPI title={'Registered Ministries'} value={'2 Active'} desc={'Pathfinder, Praise Team'} icon={<Award className="text-indigo-600" />} />
+        <MemberKPI title={'Events Attending'} value={'3 Upcoming'} desc={'Reserved in portal'} icon={<Calendar className="text-green-600" />} />
       </div>
 
       {/* Main Grid */}
@@ -157,33 +155,33 @@ export const MemberDashboard: React.FC = () => {
         {/* Attendance Timeline */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div>
-            <h3 className="font-extrabold text-sm text-slate-800 dark:text-white">{t('memberDashboard.recentAttendance')}</h3>
-            <p className="text-[10px] text-slate-400 font-medium">{t('memberDashboard.recentAttendanceDesc')}</p>
+            <h3 className="font-extrabold text-sm text-slate-800 dark:text-white">{'Recent Attendance Logs'}</h3>
+            <p className="text-[10px] text-slate-400 font-medium">{'Verify your digital check-in logs'}</p>
           </div>
           
           <div className="my-4 space-y-2.5 text-xs">
-            <AttendanceLogItem title={t('memberDashboard.logSabbath1Title')} present={true} time={t('memberDashboard.logSabbath1Time')} />
-            <AttendanceLogItem title={t('memberDashboard.logSabbath2Title')} present={true} time={t('memberDashboard.logSabbath2Time')} />
-            <AttendanceLogItem title={t('memberDashboard.logSabbath3Title')} present={false} time={t('memberDashboard.logSabbath3Time')} />
-            <AttendanceLogItem title={t('memberDashboard.logSabbath4Title')} present={true} time={t('memberDashboard.logSabbath4Time')} />
+            <AttendanceLogItem title={'Sabbath Session — May 16'} present={true} time={'09:12 AM via QR'} />
+            <AttendanceLogItem title={'Sabbath Session — May 09'} present={true} time={'08:44 AM via QR'} />
+            <AttendanceLogItem title={'Sabbath Session — May 02'} present={false} time={'Absent'} />
+            <AttendanceLogItem title={'Sabbath Session — Apr 25'} present={true} time={'09:05 AM Manual'} />
           </div>
 
           <span className="text-[10px] text-slate-400 font-semibold text-center block">
-            {t('memberDashboard.scanHint')}
+            {'Scan lobby QR code every Sabbath morning to record attendance automatically.'}
           </span>
         </div>
 
         {/* Local Events list */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div>
-            <h3 className="font-extrabold text-sm text-slate-800 dark:text-white mb-3">{t('memberDashboard.registerEvents')}</h3>
+            <h3 className="font-extrabold text-sm text-slate-800 dark:text-white mb-3">{'Register for Upcoming Events'}</h3>
             <div className="space-y-3 text-xs">
-              <MemberEventItem title={t('memberDashboard.event1Title')} desc={t('memberDashboard.event1Desc')} date={t('memberDashboard.event1Date')} />
-              <MemberEventItem title={t('memberDashboard.event2Title')} desc={t('memberDashboard.event2Desc')} date={t('memberDashboard.event2Date')} />
+              <MemberEventItem title={'Pathfinder Camporee 2026'} desc={'National Youth campground assembly'} date={'June 12'} />
+              <MemberEventItem title={'Family Fellowship Lunch'} desc={'Shared lunch event at Central Hall'} date={'May 23'} />
             </div>
           </div>
           <button className="w-full mt-4 bg-sda-blue hover:bg-sda-blue-dark dark:bg-sda-gold dark:hover:bg-sda-gold-light dark:text-sda-blue font-bold text-white text-xs py-2.5 rounded-xl cursor-pointer">
-            {t('memberDashboard.exploreEvents')}
+            {'Explore All Church Events'}
           </button>
         </div>
 
@@ -192,7 +190,7 @@ export const MemberDashboard: React.FC = () => {
           <div>
             <h3 className="font-extrabold text-sm text-slate-800 dark:text-white mb-3 flex items-center gap-1.5">
               <Bell size={16} className="text-sda-gold" />
-              {t('memberDashboard.announcementsForYou')}
+              {'Announcements For You'}
             </h3>
             <div className="space-y-3.5 text-xs leading-relaxed">
               {isLoading ? (
@@ -201,7 +199,7 @@ export const MemberDashboard: React.FC = () => {
                   <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded w-1/2"></div>
                 </div>
               ) : latestAnnouncements.length === 0 ? (
-                <p className="text-slate-400 italic">{t('memberDashboard.noRecentAnnouncements')}</p>
+                <p className="text-slate-400 italic">{'No recent announcements.'}</p>
               ) : (
                 latestAnnouncements.map((a, idx) => (
                   <div key={a.id} className={idx > 0 ? "border-t border-slate-100 dark:border-slate-800 pt-3" : ""}>
@@ -216,7 +214,7 @@ export const MemberDashboard: React.FC = () => {
             </div>
           </div>
           <Link to={ROUTES.COMMUNICATION} className="w-full mt-4 flex items-center justify-center gap-0.5 text-[11px] font-bold text-sda-blue dark:text-sda-gold hover:underline">
-            {t('memberDashboard.viewAllAnnouncements')} <ChevronRight size={14} />
+            {'View All Announcements'} <ChevronRight size={14} />
           </Link>
         </div>
       </div>
@@ -241,7 +239,6 @@ const MemberKPI = ({ title, value, desc, icon }: any) => (
 );
 
 const AttendanceLogItem = ({ title, present, time }: any) => {
-  const { t } = useTranslation();
   return (
   <div className="flex justify-between items-center border-b border-slate-50 dark:border-slate-850 pb-2">
     <div>
@@ -251,11 +248,11 @@ const AttendanceLogItem = ({ title, present, time }: any) => {
     <div>
       {present ? (
         <span className="text-[9px] font-extrabold bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full uppercase">
-          {t('memberDashboard.present')}
+          {'PRESENT'}
         </span>
       ) : (
         <span className="text-[9px] font-extrabold bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full uppercase">
-          {t('memberDashboard.absent')}
+          {'ABSENT'}
         </span>
       )}
     </div>
@@ -276,7 +273,6 @@ const SabbathSchoolEditCard = ({
   churchName: string;
   districtName: string;
 }) => {
-  const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [draftId, setDraftId] = useState(selectedClassId);
 
@@ -300,7 +296,7 @@ const SabbathSchoolEditCard = ({
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs relative overflow-hidden">
       <div className="flex justify-between items-start mb-2">
-        <span className="text-xs font-bold text-slate-400">{t('memberDashboard.kpiSabbathSchool')}</span>
+        <span className="text-xs font-bold text-slate-400">{'Sabbath School Class'}</span>
         <div className="flex items-center gap-1.5">
           {editing && (
             <button type="button" onClick={cancel} className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
@@ -324,19 +320,19 @@ const SabbathSchoolEditCard = ({
       {editing ? (
         <div className="space-y-3 mt-2">
           <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 px-3 py-2 text-[10px] font-semibold text-slate-500 dark:text-slate-400 leading-tight">
-            {churchName || t('memberDashboard.selectChurchPrompt')}
+            {churchName || 'Select a church first'}
             {districtName && <span className="block text-[9px] text-slate-400 dark:text-slate-500 mt-0.5">{districtName}</span>}
           </div>
           <div>
             <label className="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">
-              {t('memberDashboard.selectClass')}
+              {'Sabbath Class'}
             </label>
             <select
               value={draftId}
               onChange={(e) => setDraftId(e.target.value)}
               className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-2 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-sda-blue/40"
             >
-              <option value="">{t('memberDashboard.selectClassPlaceholder')}</option>
+              <option value="">{'Choose your class...'}</option>
               {classOptions.map((cls) => (
                 <option key={cls.id} value={cls.id}>{cls.name}</option>
               ))}
@@ -346,10 +342,10 @@ const SabbathSchoolEditCard = ({
       ) : (
         <>
           <div className="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight">
-            {displayClass ? displayClass.name : t('memberDashboard.kpiSabbathSchoolValue')}
+            {displayClass ? displayClass.name : 'Class #4'}
           </div>
           <p className="text-[10px] text-slate-400 font-medium mt-1">
-            {churchName || t('memberDashboard.selectChurchPrompt')}
+            {churchName || 'Select a church first'}
           </p>
           {districtName && churchName && (
             <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5">{districtName}</p>
