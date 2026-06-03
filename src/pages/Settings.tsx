@@ -27,7 +27,7 @@ export const Settings: React.FC = () => {
   const { addPhoto } = usePhotoStore();
   const navigate = useNavigate();
 
-  if (user?.role !== 'SUPER_ADMIN') {
+  if (user?.role !== 'SUPER_ADMIN' && user?.role !== 'FIELD_ADMINISTRATOR') {
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
   }
 

@@ -8,6 +8,8 @@ import { Sun, Moon, Languages } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { setPreferredLanguage } from '@/lib/language';
+import { AdventistLogo } from '@/components/common/AdventistLogo';
+import { MobileMenu } from '@/components/common/MobileMenu';
 
 const AuthLayout: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -23,12 +25,18 @@ const AuthLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
       <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 h-16 flex items-center justify-between px-4 sm:px-6 shadow-sm">
-        <div className="flex items-center gap-2">
-          <Link to={ROUTES.HOME} className="hover:opacity-80 transition-opacity">
-            <MifemLogo size="md" />
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-4">
+        <Link to={ROUTES.HOME} className="hover:opacity-80 transition-opacity shrink-0">
+          <MifemLogo size="sm" iconOnly className="sm:hidden" />
+          <MifemLogo size="md" className="hidden sm:flex" />
+        </Link>
+
+        {/* Mobile compact title (only when logo shows iconOnly) */}
+        <h1 className="sm:hidden text-[11px] sm:text-[12px] font-medium truncate leading-tight flex-1 text-center px-2 min-w-0">
+          {t('mifem.brandName')}
+        </h1>
+
+        {/* Desktop actions */}
+        <div className="hidden md:flex items-center gap-2 sm:gap-4">
           <div className="relative">
             <button
               type="button"
@@ -86,18 +94,25 @@ const AuthLayout: React.FC = () => {
           >
             {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
           </button>
+          <AdventistLogo compact />
+        </div>
+
+        {/* Mobile right: SDA logo + three-dot menu */}
+        <div className="flex md:hidden items-center gap-4 shrink-0">
+          <AdventistLogo compact />
+          <MobileMenu />
         </div>
       </header>
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8">
-        <div className="w-full max-w-lg mx-auto bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800">
-          <div className="relative bg-sda-blue p-6 sm:p-8 text-white text-center overflow-hidden">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+        <div className="w-full max-w-[28rem] sm:max-w-lg mx-auto bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div className="relative bg-sda-blue p-4 sm:p-6 text-white text-center overflow-hidden">
             <img
               src="/upload/MIFEM-2.webp"
               alt=""
               className="absolute inset-0 w-full h-full object-cover opacity-20"
             />
             <div className="relative z-10">
-              <MifemLogo size="xl" className="justify-center mb-4" iconOnly />
+              <MifemLogo size="xl" className="justify-center mb-4 [&_img]:brightness-0 [&_img]:invert" iconOnly />
               <h1 className="text-2xl font-bold tracking-tight">{t('app.name')}</h1>
               <p className="text-sda-gold-light text-sm mt-1">{t('auth.authLayoutSubtitle')}</p>
             </div>

@@ -33,6 +33,7 @@ import Settings from '@/pages/Settings';
 import ForcePasswordChange from '@/pages/auth/ForcePasswordChange';
 import Home from '@/pages/Home';
 import AnnouncementsPage from '@/pages/announcements/AnnouncementsPage';
+import HeroControlPage from '@/pages/admin/HeroControlPage';
 
 const LoadingScreen = () => (
   <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
@@ -80,7 +81,7 @@ const AppRouter: React.FC = () => {
               <Route path={ROUTES.ACHIEVEMENTS} element={<AchievementsModule />} />
               <Route path={ROUTES.PROFILE} element={<Profile />} />
 
-              {/* SUPER_ADMIN only routes */}
+              {/* SUPER_ADMIN / FIELD_ADMINISTRATOR routes */}
               <Route element={<AdminRoute />}>
                 <Route path={ROUTES.SETTINGS} element={<Settings />} />
                 <Route path={ROUTES.EVENT_ADD} element={<EventForm />} />
@@ -89,23 +90,28 @@ const AppRouter: React.FC = () => {
                 <Route path={ROUTES.SYSTEM_SETTINGS} element={<Settings />} />
               </Route>
 
-              {/* Member create/edit — accessible by SUPER_ADMIN, CHURCH_LEADER, MINISTRY_LEADER */}
-              <Route element={<RoleBasedRoute allowedRoles={['SUPER_ADMIN', 'CHURCH_LEADER', 'MINISTRY_LEADER'] as UserRole[]} />}>
+              {/* SUPER_ADMIN only */}
+              <Route element={<RoleBasedRoute allowedRoles={['SUPER_ADMIN'] as UserRole[]} />}>
+                <Route path={ROUTES.HERO_CONTROL} element={<HeroControlPage />} />
+              </Route>
+
+              {/* Member create/edit — accessible by SUPER_ADMIN, FIELD_ADMINISTRATOR, CHURCH_LEADER, MINISTRY_LEADER */}
+              <Route element={<RoleBasedRoute allowedRoles={['SUPER_ADMIN', 'FIELD_ADMINISTRATOR', 'CHURCH_LEADER', 'MINISTRY_LEADER'] as UserRole[]} />}>
                 <Route path={ROUTES.MEMBER_ADD} element={<MemberForm />} />
                 <Route path={ROUTES.MEMBER_EDIT} element={<MemberForm />} />
               </Route>
 
               {/* Role-specific routes */}
-              <Route element={<RoleBasedRoute allowedRoles={['UNION_LEADER'] as UserRole[]} />}>
+              <Route element={<RoleBasedRoute allowedRoles={['UNION_LEADER', 'FIELD_ADMINISTRATOR'] as UserRole[]} />}>
                 <Route path={ROUTES.FIELDS} element={<Dashboard />} />
                 <Route path={ROUTES.MINISTRY_ACTIVITIES} element={<Dashboard />} />
               </Route>
 
-              <Route element={<RoleBasedRoute allowedRoles={['FIELD_LEADER'] as UserRole[]} />}>
+              <Route element={<RoleBasedRoute allowedRoles={['FIELD_ADMINISTRATOR', 'FIELD_LEADER'] as UserRole[]} />}>
                 <Route path={ROUTES.DISTRICTS} element={<Dashboard />} />
               </Route>
 
-              <Route element={<RoleBasedRoute allowedRoles={['DISTRICT_LEADER'] as UserRole[]} />}>
+              <Route element={<RoleBasedRoute allowedRoles={['FIELD_ADMINISTRATOR', 'DISTRICT_LEADER'] as UserRole[]} />}>
                 <Route path={ROUTES.CHURCHES} element={<Dashboard />} />
                 <Route path={ROUTES.CHURCH_LEADERS} element={<Dashboard />} />
               </Route>
@@ -114,7 +120,7 @@ const AppRouter: React.FC = () => {
                 <Route path={ROUTES.ACTIVITIES} element={<Dashboard />} />
               </Route>
 
-              <Route element={<RoleBasedRoute allowedRoles={['MINISTRY_LEADER'] as UserRole[]} />}>
+              <Route element={<RoleBasedRoute allowedRoles={['FIELD_ADMINISTRATOR', 'MINISTRY_LEADER'] as UserRole[]} />}>
                 <Route path={ROUTES.VOLUNTEERS} element={<Dashboard />} />
                 <Route path={ROUTES.DOCUMENTS} element={<Dashboard />} />
                 <Route path={ROUTES.PROGRAMS} element={<Dashboard />} />
@@ -129,8 +135,8 @@ const AppRouter: React.FC = () => {
                 <Route path={ROUTES.PARTICIPATION_HISTORY} element={<Dashboard />} />
               </Route>
 
-              {/* Routes accessible by SUPER_ADMIN only via role check */}
-              <Route element={<RoleBasedRoute allowedRoles={['SUPER_ADMIN'] as UserRole[]} />}>
+              {/* Routes accessible by SUPER_ADMIN or FIELD_ADMINISTRATOR via role check */}
+              <Route element={<RoleBasedRoute allowedRoles={['SUPER_ADMIN', 'FIELD_ADMINISTRATOR'] as UserRole[]} />}>
                 <Route path={ROUTES.ROLES_PERMISSIONS} element={<UserManagement />} />
                 <Route path={ROUTES.ANALYTICS} element={<ReportsAnalytics />} />
                 <Route path={ROUTES.NOTIFICATIONS} element={<CommunicationHub />} />
@@ -140,7 +146,7 @@ const AppRouter: React.FC = () => {
               {/* Announcements — accessible by all roles that can send or read */}
               <Route
                 path={ROUTES.ANNOUNCEMENTS}
-                element={<RoleBasedRoute allowedRoles={['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER', 'MEMBER', 'VOLUNTEER'] as UserRole[]} />}
+                element={<RoleBasedRoute allowedRoles={['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_ADMINISTRATOR', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER', 'MEMBER', 'VOLUNTEER'] as UserRole[]} />}
               >
                 <Route index element={<AnnouncementsPage />} />
               </Route>

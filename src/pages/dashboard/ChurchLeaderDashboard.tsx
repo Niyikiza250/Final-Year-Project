@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import { LeaderAchievementForm } from '@/components/leader/LeaderAchievementForm';
 
+
 const CHECKIN_METHODS = [
   { name: 'QR Scan', value: 450 },
   { name: 'Manual Roster', value: 280 },

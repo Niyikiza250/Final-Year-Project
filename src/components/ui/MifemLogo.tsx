@@ -10,10 +10,10 @@ interface MifemLogoProps {
 }
 
 const sizeMap = {
-  sm: { icon: 28, text: 'text-[10px] sm:text-xs', tagline: 'text-[6px] sm:text-[7px]' },
-  md: { icon: 40, text: 'text-xs sm:text-sm', tagline: 'text-[7px] sm:text-[8px]' },
-  lg: { icon: 48, text: 'text-sm sm:text-base', tagline: 'text-[8px] sm:text-[9px]' },
-  xl: { icon: 56, text: 'text-base sm:text-lg', tagline: 'text-[9px] sm:text-[10px]' },
+  sm: { icon: 28, text: 'text-[11px] sm:text-sm', tagline: 'text-[6px] sm:text-[7px]' },
+  md: { icon: 40, text: 'text-sm sm:text-base', tagline: 'text-[7px] sm:text-[8px]' },
+  lg: { icon: 48, text: 'text-base sm:text-lg', tagline: 'text-[8px] sm:text-[9px]' },
+  xl: { icon: 56, text: 'text-lg sm:text-xl', tagline: 'text-[9px] sm:text-[10px]' },
 };
 
 const UPLOADS_LOGO = '/upload/MIFEM_logo.png';
@@ -21,6 +21,7 @@ const UPLOADS_LOGO = '/upload/MIFEM_logo.png';
 export const MifemLogo: React.FC<MifemLogoProps> = ({ className, iconOnly = false, size = 'md' }) => {
   const { t } = useTranslation();
   const s = sizeMap[size];
+  const weightClass = size === 'sm' ? 'font-medium' : 'font-semibold';
   const { logoDataUrl, setLogo } = useLogoStore();
 
   useEffect(() => {
@@ -42,8 +43,8 @@ export const MifemLogo: React.FC<MifemLogoProps> = ({ className, iconOnly = fals
       </div>
 
       {!iconOnly && (
-        <div className="flex flex-col leading-tight">
-          <span className={cn('font-extrabold tracking-wider text-sda-blue dark:text-sda-gold', s.text)}>
+        <div className="flex flex-col leading-tight min-w-0">
+          <span className={cn('tracking-normal text-sda-blue dark:text-sda-gold truncate', weightClass, s.text)}>
             {t('mifem.brandName')}
           </span>
           <span className={cn('font-semibold text-slate-500 dark:text-slate-400', s.tagline)}>

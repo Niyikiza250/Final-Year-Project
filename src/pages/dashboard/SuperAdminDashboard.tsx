@@ -2,7 +2,8 @@ import React from 'react';
 import {
   Users, Shield, Church, Calendar, Heart, UserCheck, Megaphone,
   Activity, Settings, FileText, Bell, Database, Globe, Upload,
-  BarChart3, ClipboardList, Eye, AlertTriangle, CheckCircle, ArrowRight
+  BarChart3, ClipboardList, Eye, AlertTriangle, CheckCircle, ArrowRight,
+  ImagePlus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
@@ -27,7 +28,6 @@ const RECENT_ACTIVITY = [
 ];
 
 export const SuperAdminDashboard: React.FC = () => {
-
   const { data: announcements } = useAnnouncements();
 
   const statsCards = [
@@ -42,6 +42,7 @@ export const SuperAdminDashboard: React.FC = () => {
   const quickActions = [
     { label: 'Manage Users', icon: <Users size={16} />, to: ROUTES.ADMIN_USERS, color: 'bg-sda-blue text-white' },
     { label: 'Roles & Permissions', icon: <Shield size={16} />, to: ROUTES.ROLES_PERMISSIONS, color: 'bg-indigo-600 text-white' },
+    { label: 'Hero Control', icon: <ImagePlus size={16} />, to: ROUTES.HERO_CONTROL, color: 'bg-purple-600 text-white' },
     { label: 'System Settings', icon: <Settings size={16} />, to: ROUTES.SYSTEM_SETTINGS, color: 'bg-slate-700 text-white' },
     { label: 'Audit Logs', icon: <ClipboardList size={16} />, to: ROUTES.AUDIT_LOGS, color: 'bg-amber-600 text-white' },
     { label: 'Analytics', icon: <BarChart3 size={16} />, to: ROUTES.ANALYTICS, color: 'bg-emerald-600 text-white' },

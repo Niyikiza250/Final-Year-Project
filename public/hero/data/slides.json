@@ -1,0 +1,44 @@
+[
+  {
+    "id": "slide-2",
+    "title": "Uniting Leaders for a Connected Mission",
+    "description": "From field administrators to ministry leaders, MIFEM provides role-based dashboards and real-time collaboration tools designed for your church organization.",
+    "bgColor": "bg-sda-blue",
+    "overlayFrom": "from-sda-blue/85",
+    "overlayTo": "to-slate-950/70",
+    "bgImage": "/hero/images/slide-2.webp",
+    "primaryCta": {
+      "label": "Join Now",
+      "href": "/register"
+    },
+    "active": true
+  },
+  {
+    "id": "slide-1",
+    "title": "Transforming Communities Through Technology",
+    "description": "MIFEM empowers church leaders with modern tools for member management, event coordination, and seamless communication across every level of your organization.",
+    "bgColor": "bg-slate-900",
+    "overlayFrom": "from-slate-900/80",
+    "overlayTo": "to-slate-950/60",
+    "bgImage": "/hero/images/slide-1.png",
+    "primaryCta": {
+      "label": "Get Started",
+      "href": "/login"
+    },
+    "active": true
+  },
+  {
+    "id": "slide-3",
+    "title": "Empowering Faith-Driven Innovation",
+    "description": "Manage members, track attendance, organize events, and share announcements — all from a single, secure platform built for the unique needs of your church.",
+    "bgColor": "bg-slate-950",
+    "overlayFrom": "from-slate-950/85",
+    "overlayTo": "to-sda-blue/60",
+    "bgImage": "/hero/images/slide-3.webp",
+    "primaryCta": {
+      "label": "Get Started",
+      "href": "/login"
+    },
+    "active": true
+  }
+]

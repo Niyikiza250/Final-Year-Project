@@ -7,6 +7,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 
+
 const FIELD_DATA = [
   { field: 'Central Field', churches: 15, members: 15400, baptisms: 1250 },
   { field: 'Western Field', churches: 12, members: 12800, baptisms: 1100 },

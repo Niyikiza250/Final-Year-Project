@@ -68,6 +68,8 @@ export const Profile: React.FC = () => {
         return { title: t('profile.roleAdminTitle'), details: t('profile.roleAdminDetail') };
       case 'UNION_LEADER':
         return { title: t('profile.roleUnionLeaderTitle'), details: t('profile.roleUnionLeaderDetail') };
+      case 'FIELD_ADMINISTRATOR':
+        return { title: 'Field Administrator', details: 'Manages all aspects of the assigned field including users, districts, churches, and settings.' };
       case 'FIELD_LEADER':
         return { title: t('profile.roleFieldLeaderTitle'), details: t('profile.roleFieldLeaderDetail') };
       case 'DISTRICT_LEADER':

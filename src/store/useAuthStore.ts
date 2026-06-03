@@ -40,7 +40,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
-      excelImportAllowedRoles: ['SUPER_ADMIN'],
+      excelImportAllowedRoles: ['FIELD_ADMINISTRATOR'],
       login: (user, token) => {
         localStorage.setItem('token', token);
         set({ user, token, isAuthenticated: true });

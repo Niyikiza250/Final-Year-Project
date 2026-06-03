@@ -17,6 +17,9 @@ import {
   FolderOpen,
   ListChecks,
   ShieldCheck,
+  Upload,
+  Settings,
+  ImagePlus,
 } from 'lucide-react';
 
 export interface NavItem {
@@ -28,8 +31,8 @@ export interface NavItem {
 }
 
 const SUPER_ADMIN_ROLES: UserRole[] = ['SUPER_ADMIN'];
-const LEADER_ROLES: UserRole[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER'];
-const ALL_HIGHER_ROLES: UserRole[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER'];
+const LEADER_ROLES: UserRole[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_ADMINISTRATOR', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER'];
+const ALL_HIGHER_ROLES: UserRole[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_ADMINISTRATOR', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER'];
 
 export const NAVIGATION_CONFIG: NavItem[] = [
   // Dashboard - ALL roles
@@ -65,6 +68,12 @@ export const NAVIGATION_CONFIG: NavItem[] = [
     labelKey: 'Announcements',
     roles: SUPER_ADMIN_ROLES,
   },
+  {
+    to: ROUTES.HERO_CONTROL,
+    icon: <ImagePlus size={20} />,
+    labelKey: 'Hero Control',
+    roles: SUPER_ADMIN_ROLES,
+  },
   // ===== UNION LEADER =====
   {
     to: ROUTES.FIELDS,
@@ -90,36 +99,79 @@ export const NAVIGATION_CONFIG: NavItem[] = [
     labelKey: 'Announcements',
     roles: ['UNION_LEADER'],
   },
-  // ===== CONFERENCE LEADER =====
+  // ===== FIELD ADMINISTRATOR =====
   {
-    to: ROUTES.DISTRICTS,
-    icon: <Map size={20} />,
-    labelKey: 'Districts',
-    roles: ['FIELD_LEADER'],
+    to: ROUTES.ADMIN_USERS,
+    icon: <Users size={20} />,
+    labelKey: 'User Management',
+    roles: ['FIELD_ADMINISTRATOR'],
+  },
+  {
+    to: ROUTES.ANNOUNCEMENTS,
+    icon: <Megaphone size={20} />,
+    labelKey: 'Announcements',
+    roles: ['FIELD_ADMINISTRATOR'],
   },
   {
     to: ROUTES.EVENTS,
     icon: <Calendar size={20} />,
     labelKey: 'Events',
+    roles: ['FIELD_ADMINISTRATOR'],
+  },
+  {
+    to: ROUTES.REPORTS,
+    icon: <FileText size={20} />,
+    labelKey: 'Reports & Analytics',
+    roles: ['FIELD_ADMINISTRATOR'],
+  },
+  // ===== FIELD LEADER =====
+  {
+    to: ROUTES.DISTRICTS,
+    icon: <Map size={20} />,
+    labelKey: 'District Management',
+    roles: ['FIELD_LEADER'],
+  },
+  {
+    to: ROUTES.CHURCHES,
+    icon: <Church size={20} />,
+    labelKey: 'Church Management',
+    roles: ['FIELD_LEADER'],
+  },
+  {
+    to: ROUTES.MEMBERS,
+    icon: <Users size={20} />,
+    labelKey: 'Member Registry',
     roles: ['FIELD_LEADER'],
   },
   {
     to: ROUTES.REPORTS,
     icon: <FileText size={20} />,
-    labelKey: 'Field Reports',
+    labelKey: 'Reports',
     roles: ['FIELD_LEADER'],
   },
   {
     to: ROUTES.ANNOUNCEMENTS,
     icon: <Megaphone size={20} />,
     labelKey: 'Announcements',
+    roles: ['FIELD_LEADER'],
+  },
+  {
+    to: ROUTES.UPLOADED_FILES,
+    icon: <Upload size={20} />,
+    labelKey: 'Bulk Registration',
     roles: ['FIELD_LEADER'],
   },
   // ===== DISTRICT LEADER =====
   {
-    to: ROUTES.EVENTS,
-    icon: <Calendar size={20} />,
-    labelKey: 'Events',
+    to: ROUTES.CHURCHES,
+    icon: <Church size={20} />,
+    labelKey: 'Church Management',
+    roles: ['DISTRICT_LEADER'],
+  },
+  {
+    to: ROUTES.MEMBERS,
+    icon: <Users size={20} />,
+    labelKey: 'Member Registry',
     roles: ['DISTRICT_LEADER'],
   },
   {
@@ -132,19 +184,25 @@ export const NAVIGATION_CONFIG: NavItem[] = [
     to: ROUTES.ANNOUNCEMENTS,
     icon: <Megaphone size={20} />,
     labelKey: 'Announcements',
+    roles: ['DISTRICT_LEADER'],
+  },
+  {
+    to: ROUTES.UPLOADED_FILES,
+    icon: <Upload size={20} />,
+    labelKey: 'Bulk Registration',
     roles: ['DISTRICT_LEADER'],
   },
   // ===== CHURCH LEADER =====
   {
-    to: ROUTES.MEMBERS,
-    icon: <Users size={20} />,
-    labelKey: 'Members',
+    to: ROUTES.MINISTRY_ACTIVITIES,
+    icon: <Activity size={20} />,
+    labelKey: 'Ministry Management',
     roles: ['CHURCH_LEADER'],
   },
   {
-    to: ROUTES.ATTENDANCE,
-    icon: <UserCheck size={20} />,
-    labelKey: 'Attendance',
+    to: ROUTES.MEMBERS,
+    icon: <Users size={20} />,
+    labelKey: 'Member Registry',
     roles: ['CHURCH_LEADER'],
   },
   {
@@ -154,9 +212,9 @@ export const NAVIGATION_CONFIG: NavItem[] = [
     roles: ['CHURCH_LEADER'],
   },
   {
-    to: ROUTES.REPORTS,
-    icon: <FileText size={20} />,
-    labelKey: 'Reports',
+    to: ROUTES.UPLOADED_FILES,
+    icon: <Upload size={20} />,
+    labelKey: 'Bulk Registration',
     roles: ['CHURCH_LEADER'],
   },
 
@@ -168,21 +226,15 @@ export const NAVIGATION_CONFIG: NavItem[] = [
     roles: ['MINISTRY_LEADER'],
   },
   {
-    to: ROUTES.EVENTS,
-    icon: <Calendar size={20} />,
-    labelKey: 'Events',
+    to: ROUTES.VOLUNTEERS,
+    icon: <Heart size={20} />,
+    labelKey: 'Volunteers',
     roles: ['MINISTRY_LEADER'],
   },
   {
-    to: ROUTES.ATTENDANCE,
-    icon: <UserCheck size={20} />,
-    labelKey: 'Attendance',
-    roles: ['MINISTRY_LEADER'],
-  },
-  {
-    to: ROUTES.REPORTS,
-    icon: <FileText size={20} />,
-    labelKey: 'Reports',
+    to: ROUTES.UPLOADED_FILES,
+    icon: <Upload size={20} />,
+    labelKey: 'Bulk Registration',
     roles: ['MINISTRY_LEADER'],
   },
   // ===== MEMBER =====

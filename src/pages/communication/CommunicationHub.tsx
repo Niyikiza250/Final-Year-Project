@@ -207,6 +207,7 @@ const CommunicationHub: React.FC = () => {
   const getTargetAudienceLabel = () => {
     if (!user) return t('communication.audienceMembers');
     if (user.role === 'UNION_LEADER') return t('communication.audienceFieldLeaders');
+    if (user.role === 'FIELD_ADMINISTRATOR') return 'District, Church, Ministry Leaders & below';
     if (user.role === 'FIELD_LEADER') return t('communication.audienceZoneLeaders');
     if (user.role === 'ZONE_LEADER') return t('communication.audienceChurchLeaders');
     if (user.role === 'CHURCH_LEADER') return t('communication.audienceMembers');

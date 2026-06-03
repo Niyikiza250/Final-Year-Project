@@ -25,6 +25,8 @@ import { useNotificationReadStore } from '@/store/useNotificationReadStore';
 import { useHierarchicalAnnouncements } from '@/hooks/useCommunicationModule';
 import { MifemLogo } from './MifemLogo';
 import { setPreferredLanguage } from '@/lib/language';
+import { AdventistLogo } from '@/components/common/AdventistLogo';
+import { MobileMenu } from '@/components/common/MobileMenu';
 
 interface HeaderProps {
   setIsMobileOpen?: (open: boolean) => void;
@@ -70,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
         'fixed top-0 right-0 left-0 z-40 min-h-14 sm:min-h-16 border-b border-slate-200 bg-white/80 px-2 sm:px-4 md:px-6 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/80'
       )}
     >
-      <div className="flex min-h-14 sm:min-h-16 items-center justify-between gap-1 sm:gap-2">
+      <div className="flex w-full h-16 items-center justify-between gap-3 sm:gap-2">
       {/* Left side: Mobile Menu Trigger & Logo */}
       <div className="flex items-center gap-1 sm:gap-2 min-w-0 shrink">
         {setIsMobileOpen && (
@@ -84,15 +86,20 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
-        <Link to={ROUTES.DASHBOARD} className="hover:opacity-80 transition-opacity shrink-0">
+        <a href={ROUTES.HOME} className="hover:opacity-80 transition-opacity shrink-0">
           <MifemLogo size="sm" className="sm:hidden" />
           <MifemLogo size="md" className="hidden sm:flex lg:hidden" />
           <MifemLogo size="lg" className="hidden lg:flex" />
-        </Link>
+        </a>
       </div>
 
-      {/* Right side Actions */}
-      <div className="flex items-center gap-0.5 md:gap-1.5 lg:gap-3 shrink-0">
+      {/* Mobile compact title */}
+      <h1 className="md:hidden text-[12px] font-medium truncate leading-tight flex-1 text-center px-2 min-w-0">
+        {t('mifem.brandName')}
+      </h1>
+
+      {/* Right side Actions - hidden on mobile */}
+      <div className="hidden md:flex items-center gap-0.5 md:gap-1.5 lg:gap-3 shrink-0">
         {/* Language Selector */}
         <div className="relative">
           <button
@@ -360,7 +367,15 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
         </div>
-      </div>
+        </div>
+
+        {/* SDA Logo + Mobile Menu - right side */}
+        <div className="flex items-center gap-4 shrink-0">
+          <AdventistLogo compact />
+          <div className="md:hidden flex items-center">
+            <MobileMenu />
+          </div>
+        </div>
       </div>
     </header>
   );

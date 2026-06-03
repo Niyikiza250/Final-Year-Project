@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,13 +30,19 @@ import {
 import { useAuthStore } from '@/store/useAuthStore';
 import { ROUTES } from '@/constants/routes';
 
-const ROLES: UserRole[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER', 'MEMBER', 'VOLUNTEER'];
+const ALL_ROLES: UserRole[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_ADMINISTRATOR', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER', 'MEMBER', 'VOLUNTEER'];
 
 const UserManagement: React.FC = () => {
   const { t } = useTranslation();
   const { user: currentUser, excelImportAllowedRoles = ['ADMIN'], toggleExcelImportPermission } = useAuthStore();
+  const ROLES = useMemo(() => {
+    if (currentUser?.role === 'FIELD_ADMINISTRATOR') {
+      return ALL_ROLES.filter(r => r !== 'SUPER_ADMIN' && r !== 'UNION_LEADER');
+    }
+    return ALL_ROLES;
+  }, [currentUser?.role]);
 
-  if (currentUser?.role !== 'SUPER_ADMIN') {
+  if (currentUser?.role !== 'SUPER_ADMIN' && currentUser?.role !== 'FIELD_ADMINISTRATOR') {
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
   }
   const { data: users, isLoading: lu } = useManagedUsers();
@@ -86,9 +92,16 @@ const UserManagement: React.FC = () => {
   const isExcelUploadAllowed = currentUser && excelImportAllowedRoles.includes(currentUser.role);
 
   const filtered = (users ?? []).filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
+    (u) => {
+      if (currentUser?.role === 'FIELD_ADMINISTRATOR') {
+        if (u.id === currentUser.id) return false;
+        if (u.role === 'SUPER_ADMIN' || u.role === 'UNION_LEADER') return false;
+      }
+      return (
+        u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase())
+      );
+    }
   );
 
   const openPerms = (u: ManagedUser) => {
@@ -264,8 +277,8 @@ const UserManagement: React.FC = () => {
         </div>
       )}
 
-      {/* System Toggle Options */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xs space-y-4">
+      {currentUser?.role !== 'FIELD_ADMINISTRATOR' && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xs space-y-4">
         <h3 className="font-extrabold text-sm text-slate-800 dark:text-white flex items-center gap-2">
           <Info size={16} className="text-sda-blue dark:text-sda-gold" />
           {t('admin.bulkRegistrationToggle')}
@@ -291,6 +304,7 @@ const UserManagement: React.FC = () => {
           })}
         </div>
       </div>
+      )}
 
       {inviteOpen && (
         <motion.div

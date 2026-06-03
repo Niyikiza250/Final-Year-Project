@@ -73,7 +73,7 @@ const ReportsAnalytics: React.FC = () => {
   const { data: trends = [] } = useAttendanceTrends();
   const [note, setNote] = useState<string | null>(null);
 
-  const canViewAll = user?.role === 'SUPER_ADMIN' || user?.role === 'UNION_LEADER';
+  const canViewAll = user?.role === 'SUPER_ADMIN' || user?.role === 'UNION_LEADER' || user?.role === 'FIELD_ADMINISTRATOR';
   const defaultField = user?.fieldId || 'FR1';
   const [selectedField, setSelectedField] = useState<string>(
     canViewAll ? 'all' : defaultField

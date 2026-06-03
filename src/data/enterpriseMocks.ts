@@ -458,6 +458,18 @@ export let MOCK_MANAGED_USERS: ManagedUser[] = [
     unionId: 'UM1',
   },
   {
+    id: 'u9',
+    name: 'Field Administrator East Central',
+    email: 'field-admin@mifem.rw',
+    role: 'FIELD_ADMINISTRATOR',
+    status: 'ACTIVE',
+    lastLogin: '2026-05-19T08:30:00',
+    mfaEnabled: true,
+    permissions: ['members.read', 'members.write', 'users.manage', 'audit.read', 'reports.view', 'comms.announce', 'settings.manage'],
+    unionId: 'UM1',
+    fieldId: 'FR1',
+  },
+  {
     id: 'u3',
     name: 'Field President Central',
     email: 'field-leader@mifem.rw',

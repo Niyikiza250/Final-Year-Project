@@ -12,6 +12,7 @@ import { useBlueCardStore } from '@/store/useBlueCardStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { BlueCardAdminPanel } from '@/components/dashboard/BlueCardAdminPanel';
 
+
 const ATTENDANCE_HISTORY = [
   { day: 'S1', present: 1 },
   { day: 'S2', present: 1 },
@@ -221,6 +222,7 @@ export const MemberDashboard: React.FC = () => {
 
       {/* Admin panel dialog */}
       <BlueCardAdminPanel open={adminPanelOpen} onClose={() => setAdminPanelOpen(false)} />
+
     </div>
   );
 };

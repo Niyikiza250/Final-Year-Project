@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { MOCK_MANAGED_USERS, MOCK_AUDIT_LOGS, MOCK_ADMIN_ACTIVITY } from '@/data/enterpriseMocks';
 import type { AccountStatus, ManagedUser } from '@/types/admin';
 import type { UserRole } from '@/constants/routes';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -229,6 +230,29 @@ export function useBulkImportUsers() {
   return useMutation({
     mutationFn: async (rows: Array<{ name: string; email: string; role: UserRole }>) => {
       await delay(800);
+
+      const currentUser = useAuthStore.getState().user;
+      const allowedRoles = useAuthStore.getState().excelImportAllowedRoles || ['SUPER_ADMIN'];
+      if (!currentUser || !allowedRoles.includes(currentUser.role)) {
+        throw new Error('You are not authorized to perform bulk registration.');
+      }
+
+      const HIERARCHY_TARGETS: Partial<Record<UserRole, UserRole[]>> = {
+        FIELD_ADMINISTRATOR: ['FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER', 'MEMBER', 'VOLUNTEER'],
+        FIELD_LEADER: ['DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER', 'MEMBER', 'VOLUNTEER'],
+        DISTRICT_LEADER: ['CHURCH_LEADER', 'MINISTRY_LEADER', 'MEMBER', 'VOLUNTEER'],
+        CHURCH_LEADER: ['MINISTRY_LEADER', 'MEMBER', 'VOLUNTEER'],
+        MINISTRY_LEADER: ['MEMBER', 'VOLUNTEER'],
+      };
+
+      const allowedTargets = HIERARCHY_TARGETS[currentUser.role] || [];
+
+      for (const row of rows) {
+        if (!allowedTargets.includes(row.role)) {
+          throw new Error(`You are not authorized to create users with role "${row.role}". Allowed: ${allowedTargets.join(', ')}`);
+        }
+      }
+
       const credentials: Array<{ name: string; email: string; tempPass: string }> = [];
       
       for (const row of rows) {

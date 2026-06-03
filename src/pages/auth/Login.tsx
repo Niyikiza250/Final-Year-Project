@@ -9,7 +9,7 @@ import { ROUTES } from '@/constants/routes';
 import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
 import { MOCK_MANAGED_USERS } from '@/data/enterpriseMocks';
 
-const STAFF_ROLES: string[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER'];
+const STAFF_ROLES: string[] = ['SUPER_ADMIN', 'UNION_LEADER', 'FIELD_ADMINISTRATOR', 'FIELD_LEADER', 'DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER'];
 
 interface LoginFormValues {
   email: string;
@@ -153,43 +153,30 @@ const Login: React.FC = () => {
       
       {/* Credentials Reference */}
       <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
-        <div className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
-          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/30">
-            <span>admin@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">Super Admin</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">
-            <span>secretary@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">Union Leader</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/30">
-            <span>conference-leader@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">Field Leader</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">
-            <span>district-leader@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">District Leader</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/30">
-            <span>church-leader@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">Church Leader</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">
-            <span>ministry-leader@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">Ministry Leader</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/30">
-            <span>member@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">Member</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">
-            <span>volunteer@mifem.rw</span>
-            <span className="text-sda-blue dark:text-sda-gold">Volunteer</span>
-          </div>
+        <div className="divide-y divide-slate-200 dark:divide-slate-800 text-[10px] sm:text-xs">
+          {[
+            { email: 'admin@mifem.rw', role: 'Super Admin' },
+            { email: 'secretary@mifem.rw', role: 'Union Leader' },
+            { email: 'field-admin@mifem.rw', role: 'Field Administrator' },
+            { email: 'field-leader@mifem.rw', role: 'Field Leader' },
+            { email: 'district-leader@mifem.rw', role: 'District Leader' },
+            { email: 'church-leader@mifem.rw', role: 'Church Leader' },
+            { email: 'ministry-leader@mifem.rw', role: 'Ministry Leader' },
+            { email: 'member@mifem.rw', role: 'Member' },
+            { email: 'volunteer@mifem.rw', role: 'Volunteer' },
+          ].map((item) => (
+            <div
+              key={item.email}
+              className="flex items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-2.5 font-bold text-slate-700 dark:text-slate-300 even:bg-white/50 dark:even:bg-slate-800/30"
+            >
+              <span className="truncate min-w-0">{item.email}</span>
+              <span className="text-sda-blue dark:text-sda-gold shrink-0">{item.role}</span>
+            </div>
+          ))}
         </div>
-        <div className="px-4 py-2 bg-amber-50 dark:bg-amber-950/20 border-t border-amber-200 dark:border-amber-900/30 flex items-center gap-1.5">
+        <div className="px-3 sm:px-4 py-2 bg-amber-50 dark:bg-amber-950/20 border-t border-amber-200 dark:border-amber-900/30 flex items-center gap-1.5">
           <Lock size={12} className="text-amber-500 shrink-0" />
-          <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400">
+          <span className="text-[9px] sm:text-[10px] font-semibold text-amber-700 dark:text-amber-400">
             Password: any 6+ characters &bull; Check "Staff/Leader" for leader accounts
           </span>
         </div>

@@ -1,11 +1,16 @@
 import React from 'react';
-import { Users, Map, Church, Calendar, Megaphone, FileText } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Users, Map, Church, Calendar, Megaphone, FileText, Upload, ToggleLeft, ToggleRight } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
+import type { UserRole } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useNotificationStore } from '@/store/useNotificationStore';
+import { getTranslatedRoleLabel } from '@/lib/roles';
 import { MOCK_FIELDS } from '@/data/enterpriseMocks';
 import { FIELD_REPORTS } from '@/data/fieldReports';
+
 
 const DISTRICT_DATA = [
   { district: 'Kigali City', churches: 12, members: 8400 },
@@ -15,8 +20,12 @@ const DISTRICT_DATA = [
   { district: 'Musanze', churches: 5, members: 2900 },
 ];
 
+const BULK_ROLES: UserRole[] = ['DISTRICT_LEADER', 'CHURCH_LEADER', 'MINISTRY_LEADER'];
+
 export const FieldLeaderDashboard: React.FC = () => {
-  const { user } = useAuthStore();
+  const { t } = useTranslation();
+  const { user, excelImportAllowedRoles = ['SUPER_ADMIN'], toggleExcelImportPermission } = useAuthStore();
+  const { addToast } = useNotificationStore();
 
   const fieldId = user?.fieldId || 'FR1';
   const report = FIELD_REPORTS[fieldId] || FIELD_REPORTS.FR1;
@@ -54,6 +63,48 @@ export const FieldLeaderDashboard: React.FC = () => {
             <p className="text-[10px] text-slate-400 font-medium mt-1">{stat.desc}</p>
           </div>
         ))}
+      </div>
+
+      {/* Bulk Registration Permissions */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-extrabold text-sm text-slate-800 dark:text-white flex items-center gap-2">
+              <Upload size={16} className="text-sda-blue dark:text-sda-gold" />
+              {'Bulk Registration Permissions'}
+            </h3>
+            <p className="text-[11px] text-slate-500 mt-1">Grant bulk Excel upload access to your leaders on the Member Registry page.</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-4 pt-1">
+          {BULK_ROLES.map((role) => {
+            const isAllowed = excelImportAllowedRoles.includes(role);
+            return (
+              <button
+                key={role}
+                onClick={() => {
+                  toggleExcelImportPermission(role);
+                  addToast({
+                    title: isAllowed
+                      ? 'Bulk Registration permission disabled successfully.'
+                      : 'Bulk Registration permission enabled successfully.',
+                    body: '',
+                    type: 'SUCCESS',
+                    duration: 4000,
+                  });
+                }}
+                className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:opacity-90 cursor-pointer"
+              >
+                {isAllowed ? (
+                  <ToggleRight size={22} className="text-green-600" />
+                ) : (
+                  <ToggleLeft size={22} className="text-slate-400" />
+                )}
+                {getTranslatedRoleLabel(role, t)}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Main Grid */}

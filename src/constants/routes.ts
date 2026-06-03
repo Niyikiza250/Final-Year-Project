@@ -47,11 +47,13 @@ export const ROUTES = {
   LANGUAGE_SETTINGS: '/language-settings',
   CHURCH_LEADERS: '/church-leaders',
   ACTIVITIES: '/activities',
+  HERO_CONTROL: '/hero-control',
 };
 
 export type UserRole =
   | 'SUPER_ADMIN'
   | 'UNION_LEADER'
+  | 'FIELD_ADMINISTRATOR'
   | 'FIELD_LEADER'
   | 'DISTRICT_LEADER'
   | 'CHURCH_LEADER'
@@ -62,12 +64,13 @@ export type UserRole =
 export const ROLE_HIERARCHY: Record<UserRole, number> = {
   SUPER_ADMIN: 0,
   UNION_LEADER: 1,
-  FIELD_LEADER: 2,
-  DISTRICT_LEADER: 3,
-  CHURCH_LEADER: 4,
-  MINISTRY_LEADER: 5,
-  MEMBER: 6,
-  VOLUNTEER: 7,
+  FIELD_ADMINISTRATOR: 2,
+  FIELD_LEADER: 3,
+  DISTRICT_LEADER: 4,
+  CHURCH_LEADER: 5,
+  MINISTRY_LEADER: 6,
+  MEMBER: 7,
+  VOLUNTEER: 8,
 };
 
 export function canAccess(requesterRole: UserRole, targetRole: UserRole): boolean {

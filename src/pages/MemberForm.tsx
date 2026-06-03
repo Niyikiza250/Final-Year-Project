@@ -39,10 +39,10 @@ const MemberForm: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const isEdit = !!id;
-  const canDirectEdit = user?.role === 'SUPER_ADMIN' || user?.role === 'CHURCH_LEADER';
+  const canDirectEdit = user?.role === 'SUPER_ADMIN' || user?.role === 'FIELD_ADMINISTRATOR' || user?.role === 'CHURCH_LEADER';
   const needsApproval = user?.role === 'MINISTRY_LEADER';
 
-  if (user?.role !== 'SUPER_ADMIN' && user?.role !== 'CHURCH_LEADER' && user?.role !== 'MINISTRY_LEADER') {
+  if (user?.role !== 'SUPER_ADMIN' && user?.role !== 'FIELD_ADMINISTRATOR' && user?.role !== 'CHURCH_LEADER' && user?.role !== 'MINISTRY_LEADER') {
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
   }
   const { data: member, isLoading: isMemberLoading } = useMember(id || '');

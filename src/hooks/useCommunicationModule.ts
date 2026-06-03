@@ -172,49 +172,60 @@ export function useHierarchicalAnnouncements() {
         const targetsMe = a.targetRole === 'UNION_LEADER';
         return fromSelf || fromSuperAdmin || (targetsMe && a.unionId === user.unionId);
       }
+      case 'FIELD_ADMINISTRATOR': {
+        const fromSelf = a.authorRole === 'FIELD_ADMINISTRATOR' && a.fieldId === user.fieldId;
+        const fromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
+        const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
+        const targetsMe = a.targetRole === 'FIELD_ADMINISTRATOR';
+        return fromSelf || fromUnion || fromSuperAdmin || (targetsMe && a.fieldId === user.fieldId);
+      }
       case 'FIELD_LEADER': {
         const fromSelf = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromFieldAdmin = a.authorRole === 'FIELD_ADMINISTRATOR' && a.fieldId === user.fieldId;
         const fromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
         const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
         const targetsMe = a.targetRole === 'FIELD_LEADER';
-        return fromSelf || fromUnion || fromSuperAdmin || (targetsMe && a.fieldId === user.fieldId);
+        return fromSelf || fromFieldAdmin || fromUnion || fromSuperAdmin || (targetsMe && a.fieldId === user.fieldId);
       }
       case 'DISTRICT_LEADER': {
         const fromSelf = a.authorRole === 'DISTRICT_LEADER' && a.districtId === user.districtId;
-        const fromConference = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromFieldLeader = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromFieldAdmin = a.authorRole === 'FIELD_ADMINISTRATOR' && a.fieldId === user.fieldId;
         const fromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
         const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
         const targetsMe = a.targetRole === 'DISTRICT_LEADER';
-        return fromSelf || fromConference || fromUnion || fromSuperAdmin || (targetsMe && a.districtId === user.districtId);
+        return fromSelf || fromFieldLeader || fromFieldAdmin || fromUnion || fromSuperAdmin || (targetsMe && a.districtId === user.districtId);
       }
       case 'CHURCH_LEADER': {
         const fromSelf = a.authorRole === 'CHURCH_LEADER' && a.churchId === user.churchId;
         const fromDistrict = a.authorRole === 'DISTRICT_LEADER' && a.districtId === user.districtId;
-        const fromConference = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromFieldLeader = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromFieldAdmin = a.authorRole === 'FIELD_ADMINISTRATOR' && a.fieldId === user.fieldId;
         const fromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
         const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
-        return fromSelf || fromDistrict || fromConference || fromUnion || fromSuperAdmin;
+        return fromSelf || fromDistrict || fromFieldLeader || fromFieldAdmin || fromUnion || fromSuperAdmin;
       }
       case 'MINISTRY_LEADER': {
         const fromSelf = a.authorRole === 'MINISTRY_LEADER' && a.churchId === user.churchId;
         const fromChurch = a.authorRole === 'CHURCH_LEADER' && a.churchId === user.churchId;
         const fromDistrict = a.authorRole === 'DISTRICT_LEADER' && a.districtId === user.districtId;
-        const fromConference = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromFieldLeader = a.authorRole === 'FIELD_LEADER' && a.fieldId === user.fieldId;
+        const fromFieldAdmin = a.authorRole === 'FIELD_ADMINISTRATOR' && a.fieldId === user.fieldId;
         const fromUnion = a.authorRole === 'UNION_LEADER' && a.unionId === user.unionId;
         const fromSuperAdmin = a.authorRole === 'SUPER_ADMIN';
-        return fromSelf || fromChurch || fromDistrict || fromConference || fromUnion || fromSuperAdmin;
+        return fromSelf || fromChurch || fromDistrict || fromFieldLeader || fromFieldAdmin || fromUnion || fromSuperAdmin;
       }
       case 'MEMBER': {
         const isMine = a.churchId === user.churchId;
         const fromLeader = a.authorRole === 'CHURCH_LEADER' || a.authorRole === 'MINISTRY_LEADER';
-        const fromUpper = ['DISTRICT_LEADER', 'FIELD_LEADER', 'UNION_LEADER', 'SUPER_ADMIN'].includes(a.authorRole);
+        const fromUpper = ['DISTRICT_LEADER', 'FIELD_LEADER', 'FIELD_ADMINISTRATOR', 'UNION_LEADER', 'SUPER_ADMIN'].includes(a.authorRole);
         return isMine && (fromLeader || fromUpper);
       }
       case 'VOLUNTEER': {
         const isMyMinistry = a.ministryId && a.ministryId === user.ministryId;
         const fromMinistry = a.authorRole === 'MINISTRY_LEADER';
         const fromChurch = a.authorRole === 'CHURCH_LEADER' && a.churchId === user.churchId;
-        const fromUpper = ['DISTRICT_LEADER', 'FIELD_LEADER', 'UNION_LEADER', 'SUPER_ADMIN'].includes(a.authorRole);
+        const fromUpper = ['DISTRICT_LEADER', 'FIELD_LEADER', 'FIELD_ADMINISTRATOR', 'UNION_LEADER', 'SUPER_ADMIN'].includes(a.authorRole);
         return (isMyMinistry && fromMinistry) || fromChurch || fromUpper;
       }
       default:

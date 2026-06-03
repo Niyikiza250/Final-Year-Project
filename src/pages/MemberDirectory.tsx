@@ -10,13 +10,15 @@ import { MOCK_MEMBERS } from '@/utils/mockData';
 import { MOCK_CHURCHES } from '@/data/enterpriseMocks';
 import { 
   Search, UserPlus, Eye, Edit, Trash2, Loader2, 
-  Download, Filter, ChevronLeft, ChevronRight, MoreHorizontal,
+  Download, Upload, Filter, ChevronLeft, ChevronRight, MoreHorizontal,
   CheckCircle, XCircle, Clock, AlertTriangle
 } from 'lucide-react';
 import { clsx } from 'clsx';
+import { BulkExcelUpload } from '@/components/dashboard/BulkExcelUpload';
 
 const getHierarchyFilters = (role: UserRole | undefined, churchName?: string) => {
   switch (role) {
+    case 'FIELD_ADMINISTRATOR':
     case 'FIELD_LEADER':
       return { showField: false, showZone: true, showChurch: true, showClass: true };
     case 'DISTRICT_LEADER':
@@ -38,7 +40,7 @@ const MemberDirectory: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const isAdmin = user?.role === 'SUPER_ADMIN';
-  const canCrud = user?.role === 'SUPER_ADMIN' || user?.role === 'CHURCH_LEADER' || user?.role === 'MINISTRY_LEADER';
+  const canCrud = user?.role === 'SUPER_ADMIN' || user?.role === 'FIELD_ADMINISTRATOR' || user?.role === 'CHURCH_LEADER' || user?.role === 'MINISTRY_LEADER';
   const isChurchLeader = user?.role === 'CHURCH_LEADER';
   const isMinistryLeader = user?.role === 'MINISTRY_LEADER';
   const userChurchName = useMemo(() => resolveChurchName(user?.churchId), [user?.churchId]);
@@ -57,6 +59,7 @@ const MemberDirectory: React.FC = () => {
   const hasMinimumSelection = (() => {
     if (isChurchLeader && userChurchName) return true;
     switch (user?.role) {
+      case 'FIELD_ADMINISTRATOR':
       case 'FIELD_LEADER':
         return zoneFilter !== '' || churchFilter !== '' || classFilter !== '';
       case 'DISTRICT_LEADER':
@@ -142,6 +145,8 @@ const MemberDirectory: React.FC = () => {
             >
               <Download size={16} className="mr-1" /> {t('common.exportPdf')}
             </button>
+            <div className="w-px bg-slate-200 dark:border-slate-800 my-1"></div>
+            <BulkExcelUpload buttonClassName="p-2 text-slate-600 hover:text-sda-blue transition-colors flex items-center text-xs font-bold gap-1" />
           </div>
           {canCrud && (
             <Link 
@@ -262,8 +267,9 @@ const MemberDirectory: React.FC = () => {
             <p className="text-sm text-slate-500 dark:text-slate-400">
               {user?.role === 'CHURCH_LEADER' && t('member.selectClassPrompt')}
               {user?.role === 'DISTRICT_LEADER' && t('member.selectChurchPrompt')}
+              {user?.role === 'FIELD_ADMINISTRATOR' && t('member.selectDistrictPrompt')}
               {user?.role === 'FIELD_LEADER' && t('member.selectDistrictPrompt')}
-              {!['CHURCH_LEADER', 'DISTRICT_LEADER', 'FIELD_LEADER'].includes(user?.role || '') && t('member.selectFiltersPrompt')}
+              {!['CHURCH_LEADER', 'DISTRICT_LEADER', 'FIELD_ADMINISTRATOR', 'FIELD_LEADER'].includes(user?.role || '') && t('member.selectFiltersPrompt')}
             </p>
           </div>
         </div>
