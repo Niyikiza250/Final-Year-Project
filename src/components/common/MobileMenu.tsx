@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   MoreVertical,
   Bell,
@@ -104,153 +104,156 @@ export const MobileMenu: React.FC = () => {
         <MoreVertical size={20} />
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <>
-            <div className="fixed inset-0 z-40" onClick={close} aria-hidden />
-            <motion.div
-              ref={panelRef}
-              role="menu"
-              initial={{ opacity: 0, scale: 0.95, y: -8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -8 }}
-              transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden"
+      {/* Fixed backdrop - always rendered, visibility toggles */}
+      <motion.div
+        className="fixed inset-0 z-40 bg-black/40"
+        initial={false}
+        animate={{ opacity: open ? 1 : 0 }}
+        onClick={close}
+        aria-hidden
+        style={{ pointerEvents: open ? 'auto' : 'none' }}
+      />
+
+      {/* Fixed panel - always rendered, visibility toggles */}
+      <motion.div
+        ref={panelRef}
+        role="menu"
+        className="fixed right-2 sm:right-4 top-16 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden"
+        initial={false}
+        animate={{
+          opacity: open ? 1 : 0,
+          scale: open ? 1 : 0.95,
+          y: open ? 0 : -8,
+        }}
+        transition={{ duration: 0.15 }}
+        style={{ pointerEvents: open ? 'auto' : 'none' }}
+      >
+        <div className="max-h-[80vh] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+          {/* User info when authenticated */}
+          {user && (
+            <div className="px-4 py-3 bg-slate-50/60 dark:bg-slate-800/30">
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{user.name}</p>
+              <span className="text-[10px] font-extrabold text-sda-blue dark:text-sda-gold uppercase tracking-wider">
+                {getTranslatedRoleLabel(user.role, t)}
+              </span>
+            </div>
+          )}
+
+          {/* Notifications */}
+          {user && (
+            <button
+              type="button"
+              onClick={() => { navigate(ROUTES.COMMUNICATION); close(); }}
+              className={itemClass}
             >
-              <div className="max-h-[80vh] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
-                {/* User info when authenticated */}
-                {user && (
-                  <div className="px-4 py-3 bg-slate-50/60 dark:bg-slate-800/30">
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{user.name}</p>
-                    <span className="text-[10px] font-extrabold text-sda-blue dark:text-sda-gold uppercase tracking-wider">
-                      {getTranslatedRoleLabel(user.role, t)}
-                    </span>
-                  </div>
+              <span className="relative">
+                <Bell className={iconClass} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
                 )}
+              </span>
+              <span className="flex-1 text-left">{t('communication.tabNotifications')}</span>
+              {unreadCount > 0 && (
+                <span className="text-[10px] font-black bg-red-100 dark:bg-red-950/60 text-red-600 px-2 py-0.5 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+          )}
 
-                {/* Notifications */}
-                {user && (
-                  <button
-                    type="button"
-                    onClick={() => { navigate(ROUTES.COMMUNICATION); close(); }}
-                    className={itemClass}
-                  >
-                    <span className="relative">
-                      <Bell className={iconClass} />
-                      {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
-                      )}
-                    </span>
-                    <span className="flex-1 text-left">{t('communication.tabNotifications')}</span>
-                    {unreadCount > 0 && (
-                      <span className="text-[10px] font-black bg-red-100 dark:bg-red-950/60 text-red-600 px-2 py-0.5 rounded-full">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </button>
-                )}
-
-                {/* Language */}
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => setLangOpen(!langOpen)}
-                    className={cn(itemClass, 'justify-between')}
-                  >
-                    <span className="flex items-center gap-3">
-                      <Languages className={iconClass} />
-                      {t('header.changeLanguage')}
-                    </span>
-                    <span className="text-[10px] font-bold uppercase text-slate-400">{i18n.language}</span>
-                  </button>
-                  <AnimatePresence>
-                    {langOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="px-4 pb-3 flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setLang('en')}
-                            className={cn(
-                              'flex-1 px-3 py-2 text-xs font-bold rounded-lg transition-colors text-center',
-                              i18n.language === 'en'
-                                ? 'bg-sda-blue text-white'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                            )}
-                          >
-                            {t('common.english')}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setLang('rw')}
-                            className={cn(
-                              'flex-1 px-3 py-2 text-xs font-bold rounded-lg transition-colors text-center',
-                              i18n.language === 'rw'
-                                ? 'bg-sda-blue text-white'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                            )}
-                          >
-                            {t('common.kinyarwanda')}
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Theme Toggle */}
+          {/* Language */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setLangOpen(!langOpen)}
+              className={cn(itemClass, 'justify-between')}
+            >
+              <span className="flex items-center gap-3">
+                <Languages className={iconClass} />
+                {t('header.changeLanguage')}
+              </span>
+              <span className="text-[10px] font-bold uppercase text-slate-400">{i18n.language}</span>
+            </button>
+            <motion.div
+              className="overflow-hidden"
+              initial={false}
+              animate={{ height: langOpen ? 'auto' : 0, opacity: langOpen ? 1 : 0 }}
+            >
+              <div className="px-4 pb-3 flex gap-2">
                 <button
                   type="button"
-                  onClick={() => { toggleTheme(); close(); }}
-                  className={itemClass}
+                  onClick={() => setLang('en')}
+                  className={cn(
+                    'flex-1 px-3 py-2 text-xs font-bold rounded-lg transition-colors text-center',
+                    i18n.language === 'en'
+                      ? 'bg-sda-blue text-white'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                  )}
                 >
-                  {theme === 'light' ? <Moon className={iconClass} /> : <Sun className={iconClass} />}
-                  {theme === 'light' ? t('header.toggleTheme') : t('header.toggleTheme')}
+                  {t('common.english')}
                 </button>
-
-                {/* Auth section */}
-                {user ? (
-                  <>
-                    <Link to={ROUTES.PROFILE} onClick={close} className={itemClass}>
-                      <User className={iconClass} />
-                      {t('nav.profile')}
-                    </Link>
-                    {user.role === 'SUPER_ADMIN' && (
-                      <Link to={ROUTES.SETTINGS} onClick={close} className={itemClass}>
-                        <Settings className={iconClass} />
-                        {t('nav.settings')}
-                      </Link>
-                    )}
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      className="flex items-center gap-3 w-full px-4 py-3 text-sm font-bold rounded-xl transition-colors text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
-                    >
-                      <LogOut className="w-4 h-4 shrink-0" />
-                      {t('common.logout')}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link to={ROUTES.LOGIN} onClick={close} className={itemClass}>
-                      <LogIn className={iconClass} />
-                      {t('auth.submit')}
-                    </Link>
-                    <Link to={ROUTES.REGISTER} onClick={close} className={itemClass}>
-                      <UserPlus className={iconClass} />
-                      {t('home.register')}
-                    </Link>
-                  </>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setLang('rw')}
+                  className={cn(
+                    'flex-1 px-3 py-2 text-xs font-bold rounded-lg transition-colors text-center',
+                    i18n.language === 'rw'
+                      ? 'bg-sda-blue text-white'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                  )}
+                >
+                  {t('common.kinyarwanda')}
+                </button>
               </div>
             </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+          </div>
+
+          {/* Theme Toggle */}
+          <button
+            type="button"
+            onClick={() => { toggleTheme(); close(); }}
+            className={itemClass}
+          >
+            {theme === 'light' ? <Moon className={iconClass} /> : <Sun className={iconClass} />}
+            {t('header.toggleTheme')}
+          </button>
+
+          {/* Auth section */}
+          {user ? (
+            <>
+              <Link to={ROUTES.PROFILE} onClick={close} className={itemClass}>
+                <User className={iconClass} />
+                {t('nav.profile')}
+              </Link>
+              {user.role === 'SUPER_ADMIN' && (
+                <Link to={ROUTES.SETTINGS} onClick={close} className={itemClass}>
+                  <Settings className={iconClass} />
+                  {t('nav.settings')}
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex items-center gap-3 w-full px-4 py-3 text-sm font-bold rounded-xl transition-colors text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
+              >
+                <LogOut className="w-4 h-4 shrink-0" />
+                {t('common.logout')}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to={ROUTES.LOGIN} onClick={close} className={itemClass}>
+                <LogIn className={iconClass} />
+                {t('auth.submit')}
+              </Link>
+              <Link to={ROUTES.REGISTER} onClick={close} className={itemClass}>
+                <UserPlus className={iconClass} />
+                {t('home.register')}
+              </Link>
+            </>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 };

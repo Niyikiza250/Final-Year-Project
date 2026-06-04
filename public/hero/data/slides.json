@@ -6,7 +6,7 @@
     "bgColor": "bg-sda-blue",
     "overlayFrom": "from-sda-blue/85",
     "overlayTo": "to-slate-950/70",
-    "bgImage": "/hero/images/slide-2.webp",
+    "bgImage": "/hero/images/slide-2.png",
     "primaryCta": {
       "label": "Join Now",
       "href": "/register"

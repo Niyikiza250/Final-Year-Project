@@ -87,16 +87,14 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         <a href={ROUTES.HOME} className="hover:opacity-80 transition-opacity shrink-0">
-          <MifemLogo size="sm" className="sm:hidden" />
+          <MifemLogo size="sm" iconOnly className="sm:hidden" />
           <MifemLogo size="md" className="hidden sm:flex lg:hidden" />
           <MifemLogo size="lg" className="hidden lg:flex" />
         </a>
+        <span className="sm:hidden text-[10px] font-medium truncate leading-tight text-sda-blue dark:text-sda-gold">
+          {t('mifem.brandNameShort')}
+        </span>
       </div>
-
-      {/* Mobile compact title */}
-      <h1 className="md:hidden text-[12px] font-medium truncate leading-tight flex-1 text-center px-2 min-w-0">
-        {t('mifem.brandName')}
-      </h1>
 
       {/* Right side Actions - hidden on mobile */}
       <div className="hidden md:flex items-center gap-0.5 md:gap-1.5 lg:gap-3 shrink-0">

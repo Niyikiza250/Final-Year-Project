@@ -18,6 +18,10 @@
     "Apple Color Emoji", "Segoe UI Emoji";
 }
 
+html, body, #root {
+  min-height: 100vh;
+}
+
 html {
   @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 antialiased scroll-smooth transition-colors duration-300;
   font-size: 16px;

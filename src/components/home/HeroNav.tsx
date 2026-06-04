@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { MoreVertical, LogIn, UserPlus, LayoutDashboard, Languages } from 'lucide-react';
+import { MoreVertical, LogIn, UserPlus, LayoutDashboard, Languages, X } from 'lucide-react';
 import { MifemLogo } from '@/components/ui/MifemLogo';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -21,8 +21,6 @@ const MOBILE_LINKS = [
   { labelKey: 'home', href: ROUTES.HOME },
   { labelKey: 'services', href: '#services' },
   { labelKey: 'contact', href: '#contact' },
-  { labelKey: 'login', href: ROUTES.LOGIN },
-  { labelKey: 'register', href: ROUTES.REGISTER },
 ];
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -106,14 +104,15 @@ const HeroNav: React.FC = () => {
     >
       <nav className="w-full px-6 sm:px-8 lg:px-12">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo + Mobile Title */}
+          {/* Logo */}
           <Link to={ROUTES.HOME} className="hover:opacity-80 transition-opacity shrink-0">
-            <MifemLogo size="sm" />
+            <MifemLogo size="sm" iconOnly className="sm:hidden" />
+            <MifemLogo size="md" className="hidden sm:flex" />
           </Link>
 
-          {/* Mobile compact title */}
-          <h1 className="md:hidden text-[12px] font-medium truncate leading-tight flex-1 text-center px-2 min-w-0">
-            {t('mifem.brandName')}
+          {/* Mobile compact title (only when logo is icon-only) */}
+          <h1 className="sm:hidden text-[11px] font-medium truncate leading-tight flex-1 text-center px-2 min-w-0">
+            {t('mifem.brandNameShort')}
           </h1>
 
           {/* Desktop links */}
@@ -237,31 +236,34 @@ const HeroNav: React.FC = () => {
         </div>
       </nav>
 
-      {/* Mobile drawer */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.4 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black md:hidden"
-              onClick={closeMobile}
-              aria-hidden
-            />
-            <motion.div
-              ref={drawerRef}
-              role="dialog"
-              aria-modal="true"
-              aria-label={t('common.menu')}
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className={`fixed top-0 right-0 bottom-0 w-72 max-w-[85vw] z-50 md:hidden overflow-y-auto shadow-2xl bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-white/10`}
-            >
+      {/* Mobile drawer - always rendered, visibility toggles */}
+      <div className="md:hidden">
+        <motion.div
+          className="fixed inset-0 bg-black z-40"
+          initial={false}
+          animate={{ opacity: mobileOpen ? 0.4 : 0 }}
+          onClick={closeMobile}
+          aria-hidden
+          style={{ pointerEvents: mobileOpen ? 'auto' : 'none' }}
+        />
+        <motion.div
+          ref={drawerRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('common.menu')}
+          className="fixed top-0 right-0 bottom-0 w-72 max-w-[85vw] z-50 overflow-y-auto shadow-2xl bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-white/10"
+          initial={false}
+          animate={{ x: mobileOpen ? 0 : '100%' }}
+          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+          style={{ pointerEvents: mobileOpen ? 'auto' : 'none' }}
+        >
               <div className="flex items-center justify-between px-5 h-16 border-b border-white/10">
-                <MifemLogo size="sm" />
+                <div className="flex items-center gap-2 min-w-0">
+                  <MifemLogo size="sm" iconOnly />
+                  <span className="text-[11px] font-medium truncate text-sda-blue dark:text-sda-gold">
+                    {t('mifem.brandNameShort')}
+                  </span>
+                </div>
                 <button
                   type="button"
                   aria-label={t('sidebar.closeMenu')}
@@ -366,9 +368,7 @@ const HeroNav: React.FC = () => {
                 </div>
               </div>
             </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      </div>
     </header>
   );
 };
