@@ -9,14 +9,13 @@ import GlassCard from '@/components/home/GlassCard';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
 import {
-  BookOpen, ImageIcon, Landmark, Heart, Newspaper, ArrowUpRight,
+  BookOpen, ImageIcon, Heart, Newspaper, ArrowUpRight,
 } from 'lucide-react';
 import type { AchievementKind } from '@/types/achievement';
 
 const kindIcon: Record<AchievementKind, React.ReactNode> = {
   STORY: <BookOpen size={18} aria-hidden />,
   GALLERY: <ImageIcon size={18} aria-hidden />,
-  MILESTONE: <Landmark size={18} aria-hidden />,
   TESTIMONY: <Heart size={18} aria-hidden />,
   NEWS: <Newspaper size={18} aria-hidden />,
 };
@@ -24,7 +23,6 @@ const kindIcon: Record<AchievementKind, React.ReactNode> = {
 const kindColor: Record<AchievementKind, string> = {
   STORY: 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300',
   GALLERY: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300',
-  MILESTONE: 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300',
   TESTIMONY: 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300',
   NEWS: 'bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300',
 };
@@ -32,7 +30,6 @@ const kindColor: Record<AchievementKind, string> = {
 const kindLabelKey: Record<AchievementKind, string> = {
   STORY: 'achievements.story',
   GALLERY: 'achievements.gallery',
-  MILESTONE: 'achievements.milestone',
   TESTIMONY: 'achievements.testimony',
   NEWS: 'achievements.news',
 };
@@ -52,7 +49,7 @@ const Home: React.FC = () => {
   const [kind, setKind] = useState<AchievementKind | ''>('');
   const { data: items = [], isLoading } = useAchievements(kind);
 
-  const kinds: (AchievementKind | '')[] = ['', 'MILESTONE', 'GALLERY', 'TESTIMONY', 'NEWS', 'STORY'];
+  const kinds: (AchievementKind | '')[] = ['', 'GALLERY', 'TESTIMONY', 'NEWS', 'STORY'];
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-200">
@@ -107,7 +104,7 @@ const Home: React.FC = () => {
           </div>
         ) : (
           <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
-            {items.map((item, i) => (
+              {items.map((item, i) => (
               <motion.div
                 key={item.id}
                 custom={i}
@@ -116,7 +113,7 @@ const Home: React.FC = () => {
                 whileInView="visible"
                 viewport={{ once: true, margin: '-40px' }}
               >
-                <GlassCard delay={0} onClick={() => navigate(ROUTES.ACHIEVEMENTS)}>
+                <GlassCard delay={0} onClick={() => navigate(ROUTES.ACHIEVEMENT_DETAILS.replace(':id', item.id))}>
                   <div className="relative h-44 sm:h-52 overflow-hidden">
                     {item.coverUrl ? (
                       <img
@@ -145,7 +142,7 @@ const Home: React.FC = () => {
                       {item.title}
                     </h3>
                     <p className="mt-1.5 text-xs font-bold text-slate-400 dark:text-white/40">{item.author}</p>
-                    <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-white/60 leading-relaxed font-medium line-clamp-2">
+                    <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-white/60 leading-relaxed font-medium line-clamp-3">
                       {item.summary}
                     </p>
                     <div className="mt-4 flex items-center justify-between">

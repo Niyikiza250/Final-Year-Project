@@ -22,6 +22,7 @@ export const ROUTES = {
   COMMUNICATION: '/communication',
   REPORTS: '/reports',
   ACHIEVEMENTS: '/achievements',
+  ACHIEVEMENT_DETAILS: '/achievements/:id',
   ADMIN_USERS: '/admin/users',
   FORCE_PASSWORD_CHANGE: '/change-password-force',
   // New role-specific routes

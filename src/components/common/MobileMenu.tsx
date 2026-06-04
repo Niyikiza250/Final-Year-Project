@@ -30,6 +30,11 @@ function getFocusable(el: HTMLElement): HTMLElement[] {
   return Array.from(el.querySelectorAll<HTMLElement>(FOCUSABLE));
 }
 
+const PUBLIC_LINKS = [
+  { label: 'home', href: ROUTES.HOME },
+  { label: 'achievements', href: ROUTES.ACHIEVEMENTS },
+];
+
 function trapFocus(e: KeyboardEvent, container: HTMLElement) {
   if (e.key !== 'Tab') return;
   const items = getFocusable(container);
@@ -45,7 +50,11 @@ function trapFocus(e: KeyboardEvent, container: HTMLElement) {
   }
 }
 
-export const MobileMenu: React.FC = () => {
+interface MobileMenuProps {
+  hasSidebarLayout?: boolean;
+}
+
+export const MobileMenu: React.FC<MobileMenuProps> = ({ hasSidebarLayout = false }) => {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
@@ -136,6 +145,39 @@ export const MobileMenu: React.FC = () => {
               <span className="text-[10px] font-extrabold text-sda-blue dark:text-sda-gold uppercase tracking-wider">
                 {getTranslatedRoleLabel(user.role, t)}
               </span>
+            </div>
+          )}
+
+          {!hasSidebarLayout && (
+            <div className="py-2">
+              {PUBLIC_LINKS.map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  onClick={close}
+                  className={itemClass}
+                >
+                  <span className="flex-1 text-left uppercase text-[10px] tracking-widest font-black text-slate-400">
+                    {t(`nav.${link.label}`)}
+                  </span>
+                </Link>
+              ))}
+              <div className="px-4 py-2 space-y-2">
+                <a
+                  href="https://sabbath-school.adventech.io/kin"
+                  onClick={close}
+                  className="flex items-center justify-center w-full rounded-xl border-2 border-sda-blue py-3 text-xs font-black text-sda-blue transition-all active:scale-95"
+                >
+                  Sabbath School
+                </a>
+                <a
+                  href="https://www.rumadventist.org/"
+                  onClick={close}
+                  className="flex items-center justify-center w-full rounded-xl bg-sda-blue py-3 text-xs font-black text-white shadow-lg transition-all active:scale-95"
+                >
+                  Visit Union
+                </a>
+              </div>
             </div>
           )}
 

@@ -374,7 +374,7 @@ export const MOCK_SYSTEM_NOTIFICATIONS: SystemNotification[] = [
 export const MOCK_ACHIEVEMENTS: AchievementItem[] = [
   {
     id: 'ach1',
-    kind: 'MILESTONE',
+    kind: 'STORY',
     title: '5,000 baptisms recorded since 2020',
     summary: 'The union celebrates faithful public evangelism and discipleship.',
     coverUrl: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=1200&auto=format&fit=crop',

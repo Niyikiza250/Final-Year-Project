@@ -39,6 +39,7 @@ export const useAchievementAdminStore = create<AchievementAdminState>()(
           id: `achievement_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
           publishedAt: new Date().toISOString().split('T')[0],
           status: 'APPROVED',
+          isCustom: true,
         };
         set((state) => ({ items: [newItem, ...state.items], revision: state.revision + 1 }));
         await saveAchievementData(newItem);
@@ -49,6 +50,7 @@ export const useAchievementAdminStore = create<AchievementAdminState>()(
           id: `achievement_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
           publishedAt: new Date().toISOString().split('T')[0],
           status: 'PENDING',
+          isCustom: true,
         };
         set((state) => ({ items: [newItem, ...state.items], revision: state.revision + 1 }));
         await saveAchievementData(newItem);
@@ -56,7 +58,7 @@ export const useAchievementAdminStore = create<AchievementAdminState>()(
       updateItem: async (id, updates) => {
         const prev = get().items.find((i) => i.id === id);
         if (!prev) return;
-        const merged = { ...prev, ...updates };
+        const merged = { ...prev, ...updates, isCustom: true };
         set((state) => ({
           items: state.items.map((i) => (i.id === id ? merged : i)),
           revision: state.revision + 1,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MoreVertical, LogIn, UserPlus, LayoutDashboard, Languages, X } from 'lucide-react';
 import { MifemLogo } from '@/components/ui/MifemLogo';
 import ThemeToggle from '@/components/ui/ThemeToggle';
@@ -45,6 +45,7 @@ function trapFocus(e: KeyboardEvent, container: HTMLElement) {
 }
 
 const HeroNav: React.FC = () => {
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -105,10 +106,18 @@ const HeroNav: React.FC = () => {
       <nav className="w-full px-6 sm:px-8 lg:px-12">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to={ROUTES.HOME} className="hover:opacity-80 transition-opacity shrink-0">
+          <button
+            onClick={() => {
+              navigate(ROUTES.HOME);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              setMobileOpen(false);
+              setLangDropdownOpen(false);
+            }}
+            className="hover:opacity-80 transition-opacity shrink-0 outline-none cursor-pointer"
+          >
             <MifemLogo size="sm" iconOnly className="sm:hidden" />
             <MifemLogo size="md" className="hidden sm:flex" />
-          </Link>
+          </button>
 
           {/* Mobile compact title (only when logo is icon-only) */}
           <h1 className="sm:hidden text-[11px] font-medium truncate leading-tight flex-1 text-center px-2 min-w-0">
@@ -192,29 +201,29 @@ const HeroNav: React.FC = () => {
             <ThemeToggle />
 
             {isAuthenticated ? (
-              <a
-                href={ROUTES.DASHBOARD}
+              <Link
+                to={ROUTES.DASHBOARD}
                 className="inline-flex items-center gap-2 rounded-xl bg-sda-gold px-5 py-2.5 text-sm font-bold text-sda-blue shadow-md shadow-sda-gold/20 hover:shadow-lg hover:shadow-sda-gold/30 transition-all"
               >
                 <LayoutDashboard size={16} />
                 {t('nav.dashboard')}
-              </a>
+              </Link>
             ) : (
               <>
-                <a
-                  href={ROUTES.LOGIN}
+                <Link
+                  to={ROUTES.LOGIN}
                   className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-white/30 px-5 py-2.5 text-sm font-bold text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all"
                 >
                   <LogIn size={16} />
                   {t('nav.login')}
-                </a>
-                <a
-                  href={ROUTES.REGISTER}
+                </Link>
+                <Link
+                  to={ROUTES.REGISTER}
                   className="inline-flex items-center gap-2 rounded-xl bg-sda-gold px-5 py-2.5 text-sm font-bold text-sda-blue shadow-md shadow-sda-gold/20 hover:shadow-lg hover:shadow-sda-gold/30 transition-all"
                 >
                   <UserPlus size={16} />
                   {t('nav.register')}
-                </a>
+                </Link>
               </>
             )}
           </div>
@@ -278,17 +287,31 @@ const HeroNav: React.FC = () => {
                 <ul className="flex flex-col gap-1">
                   {MOBILE_LINKS.map((link) => (
                     <li key={link.labelKey}>
-                      <a
-                        href={link.href}
-                        className={`block px-4 py-3 rounded-xl text-sm font-bold transition-all ${
-                          pathname === link.href
-                            ? 'bg-sda-gold/20 text-sda-gold'
-                            : 'text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
-                        }`}
-                        onClick={closeMobile}
-                      >
-                        {t('nav.' + link.labelKey)}
-                      </a>
+                      {link.href.startsWith('#') ? (
+                        <a
+                          href={link.href}
+                          className={`block px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                            pathname === link.href
+                              ? 'bg-sda-gold/20 text-sda-gold'
+                              : 'text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
+                          }`}
+                          onClick={closeMobile}
+                        >
+                          {t('nav.' + link.labelKey)}
+                        </a>
+                      ) : (
+                        <Link
+                          to={link.href}
+                          className={`block px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                            pathname === link.href
+                              ? 'bg-sda-gold/20 text-sda-gold'
+                              : 'text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
+                          }`}
+                          onClick={closeMobile}
+                        >
+                          {t('nav.' + link.labelKey)}
+                        </Link>
+                      )}
                     </li>
                   ))}
                   <li>
@@ -307,32 +330,32 @@ const HeroNav: React.FC = () => {
                 <hr className="my-4 border-slate-200 dark:border-white/10" />
 
                 {isAuthenticated ? (
-                  <a
-                    href={ROUTES.DASHBOARD}
+                  <Link
+                    to={ROUTES.DASHBOARD}
                     className="flex items-center gap-3 w-full rounded-xl bg-sda-gold px-5 py-3.5 text-sm font-bold text-sda-blue transition-all"
                     onClick={closeMobile}
                   >
                     <LayoutDashboard size={18} />
                     {t('nav.dashboard')}
-                  </a>
+                  </Link>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    <a
-                      href={ROUTES.LOGIN}
+                    <Link
+                      to={ROUTES.LOGIN}
                       className="flex items-center gap-3 w-full rounded-xl border border-slate-200 dark:border-white/20 px-5 py-3.5 text-sm font-bold text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all"
                       onClick={closeMobile}
                     >
                       <LogIn size={18} />
                       {t('nav.login')}
-                    </a>
-                    <a
-                      href={ROUTES.REGISTER}
+                    </Link>
+                    <Link
+                      to={ROUTES.REGISTER}
                       className="flex items-center gap-3 w-full rounded-xl bg-sda-gold px-5 py-3.5 text-sm font-bold text-sda-blue transition-all"
                       onClick={closeMobile}
                     >
                       <UserPlus size={18} />
                       {t('nav.register')}
-                    </a>
+                    </Link>
                   </div>
                 )}
 

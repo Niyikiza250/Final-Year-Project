@@ -23,6 +23,23 @@ export function useAchievements(kind?: AchievementKind | '') {
   });
 }
 
+export function useAchievement(id?: string) {
+  const { t, i18n } = useTranslation();
+  const items = useAchievementAdminStore((s) => s.items);
+  const revision = useAchievementAdminStore((s) => s.revision);
+  return useQuery({
+    queryKey: ['achievement', id, revision, i18n.language],
+    queryFn: async () => {
+      await delay(200);
+      if (!id) return null;
+      const item = items.find((a) => a.id === id);
+      if (!item) return null;
+      return localizeAchievement(item, t);
+    },
+    enabled: !!id,
+  });
+}
+
 export function useAchievementsAll(kind?: AchievementKind | '') {
   const { t, i18n } = useTranslation();
   const items = useAchievementAdminStore((s) => s.items);

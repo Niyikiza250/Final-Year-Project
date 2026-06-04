@@ -28,6 +28,11 @@ import { setPreferredLanguage } from '@/lib/language';
 import { AdventistLogo } from '@/components/common/AdventistLogo';
 import { MobileMenu } from '@/components/common/MobileMenu';
 
+const PUBLIC_LINKS = [
+  { label: 'home', href: ROUTES.HOME },
+  { label: 'achievements', href: ROUTES.ACHIEVEMENTS },
+];
+
 interface HeaderProps {
   setIsMobileOpen?: (open: boolean) => void;
   hasSidebarLayout?: boolean;
@@ -86,15 +91,60 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
-        <a href={ROUTES.HOME} className="hover:opacity-80 transition-opacity shrink-0">
+        <button
+          onClick={() => {
+            navigate(ROUTES.HOME);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setNotificationsOpen(false);
+            setProfileDropdownOpen(false);
+            setLangDropdownOpen(false);
+          }}
+          className="hover:opacity-80 transition-opacity shrink-0 outline-none"
+        >
           <MifemLogo size="sm" iconOnly className="sm:hidden" />
           <MifemLogo size="md" className="hidden sm:flex lg:hidden" />
           <MifemLogo size="lg" className="hidden lg:flex" />
-        </a>
+        </button>
         <span className="sm:hidden text-[10px] font-medium truncate leading-tight text-sda-blue dark:text-sda-gold">
           {t('mifem.brandNameShort')}
         </span>
       </div>
+
+      {!hasSidebarLayout && (
+        <nav className="hidden lg:flex items-center gap-8">
+          {PUBLIC_LINKS.map((link) => (
+            link.href.startsWith('/#') ? (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm font-bold text-slate-600 hover:text-sda-blue dark:text-slate-300 dark:hover:text-sda-gold transition-colors"
+              >
+                {t(`nav.${link.label}`)}
+              </a>
+            ) : (
+              <Link
+                key={link.label}
+                to={link.href}
+                className="text-sm font-bold text-slate-600 hover:text-sda-blue dark:text-slate-300 dark:hover:text-sda-gold transition-colors"
+              >
+                {t(`nav.${link.label}`)}
+              </Link>
+            )
+          ))}
+          <a
+            href="https://sabbath-school.adventech.io/kin"
+            className="ml-4 inline-flex items-center justify-center rounded-xl border-2 border-sda-blue px-4 py-2 text-xs font-black text-sda-blue transition-all hover:bg-sda-blue hover:text-white hover:-translate-y-0.5 active:translate-y-0"
+          >
+            Sabbath School
+          </a>
+          <a
+            href="https://www.rumadventist.org/"
+            className="ml-2 inline-flex items-center justify-center rounded-xl bg-sda-blue px-4 py-2 text-xs font-black text-white shadow-lg shadow-sda-blue/20 transition-all hover:bg-sda-blue-dark hover:-translate-y-0.5 active:translate-y-0"
+          >
+            Visit Union
+          </a>
+        </nav>
+      )}
 
       {/* Right side Actions - hidden on mobile */}
       <div className="hidden md:flex items-center gap-0.5 md:gap-1.5 lg:gap-3 shrink-0">
@@ -371,7 +421,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-4 shrink-0">
           <AdventistLogo compact />
           <div className="md:hidden flex items-center">
-            <MobileMenu />
+            <MobileMenu hasSidebarLayout={hasSidebarLayout} />
           </div>
         </div>
       </div>

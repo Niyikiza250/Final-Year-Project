@@ -8,12 +8,11 @@ import { Trophy, Plus, X, ImageUp, CheckCircle2, Clock, Send } from 'lucide-reac
 import { motion, AnimatePresence } from 'framer-motion';
 import type { AchievementKind } from '@/types/achievement';
 
-const KINDS: AchievementKind[] = ['STORY', 'GALLERY', 'MILESTONE', 'TESTIMONY', 'NEWS'];
+const KINDS: AchievementKind[] = ['STORY', 'GALLERY', 'TESTIMONY', 'NEWS'];
 
 const kindLabelKey: Record<AchievementKind, string> = {
   STORY: 'achievements.story',
   GALLERY: 'achievements.gallery',
-  MILESTONE: 'achievements.milestone',
   TESTIMONY: 'achievements.testimony',
   NEWS: 'achievements.news',
 };
@@ -63,13 +62,13 @@ export const LeaderAchievementForm: React.FC = () => {
     setForm((f) => ({ ...f, coverUrl: dataUrl }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.title.trim() || !form.summary.trim()) return;
 
     const tags = form.tags.split(',').map((s) => s.trim()).filter(Boolean);
     const galleryUrls = form.galleryUrls.split(',').map((s) => s.trim()).filter(Boolean);
 
-    submitFromLeader({
+    await submitFromLeader({
       kind: form.kind,
       title: form.title,
       summary: form.summary,

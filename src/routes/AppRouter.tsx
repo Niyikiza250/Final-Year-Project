@@ -34,6 +34,8 @@ import ForcePasswordChange from '@/pages/auth/ForcePasswordChange';
 import Home from '@/pages/Home';
 import AnnouncementsPage from '@/pages/announcements/AnnouncementsPage';
 import HeroControlPage from '@/pages/admin/HeroControlPage';
+import AchievementDetail from '@/pages/achievements/AchievementDetail';
+import PublicLayout from '@/layouts/PublicLayout';
 
 const LoadingScreen = () => (
   <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
@@ -46,8 +48,12 @@ const AppRouter: React.FC = () => {
     <BrowserRouter>
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
-          {/* Public Home Page — no auth required, no layout wrapper */}
-          <Route path={ROUTES.HOME} element={<Home />} />
+          {/* Public Routes with Persistent Header */}
+          <Route element={<PublicLayout />}>
+            <Route path={ROUTES.HOME} element={<Home />} />
+            <Route path={ROUTES.ACHIEVEMENTS} element={<AchievementsModule />} />
+            <Route path={ROUTES.ACHIEVEMENT_DETAILS} element={<AchievementDetail />} />
+          </Route>
 
           {/* Public/Auth Routes */}
           <Route element={<PublicRoute />}>
@@ -78,7 +84,6 @@ const AppRouter: React.FC = () => {
               <Route path={ROUTES.ATTENDANCE} element={<AttendanceTracking />} />
               <Route path={ROUTES.COMMUNICATION} element={<CommunicationHub />} />
               <Route path={ROUTES.REPORTS} element={<ReportsAnalytics />} />
-              <Route path={ROUTES.ACHIEVEMENTS} element={<AchievementsModule />} />
               <Route path={ROUTES.PROFILE} element={<Profile />} />
 
               {/* SUPER_ADMIN / FIELD_ADMINISTRATOR routes */}

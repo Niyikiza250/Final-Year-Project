@@ -4,8 +4,7 @@ import HeroSlider from './HeroSlider';
 
 const HeroSection: React.FC = () => {
   return (
-    <div className="relative pt-14 sm:pt-16">
-      <HeroNav />
+    <div className="relative">
       <HeroSlider />
     </div>
   );

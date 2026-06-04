@@ -1,4 +1,4 @@
-export type AchievementKind = 'STORY' | 'GALLERY' | 'MILESTONE' | 'TESTIMONY' | 'NEWS';
+export type AchievementKind = 'STORY' | 'GALLERY' | 'TESTIMONY' | 'NEWS';
 export type AchievementStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface AchievementItem {
@@ -15,4 +15,6 @@ export interface AchievementItem {
   submittedByRole?: string;
   /** gallery image URLs when kind is GALLERY */
   galleryUrls?: string[];
+  /** Whether this item was manually created or edited (don't localize) */
+  isCustom?: boolean;
 }

@@ -9,12 +9,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import type { AchievementKind, AchievementItem, AchievementStatus } from '@/types/achievement';
 
-const KINDS: AchievementKind[] = ['STORY', 'GALLERY', 'MILESTONE', 'TESTIMONY', 'NEWS'];
+const KINDS: AchievementKind[] = ['STORY', 'GALLERY', 'TESTIMONY', 'NEWS'];
 
 const kindLabelKey: Record<AchievementKind, string> = {
   STORY: 'achievements.story',
   GALLERY: 'achievements.gallery',
-  MILESTONE: 'achievements.milestone',
   TESTIMONY: 'achievements.testimony',
   NEWS: 'achievements.news',
 };
@@ -89,7 +88,7 @@ export const AchievementManager: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.title.trim() || !form.summary.trim()) return;
 
     const tags = form.tags.split(',').map((s) => s.trim()).filter(Boolean);
@@ -105,10 +104,10 @@ export const AchievementManager: React.FC = () => {
     };
 
     if (editingId) {
-      updateItem(editingId, data);
+      await updateItem(editingId, data);
       showSuccess(t('achievements.manager.updatedSuccess'));
     } else {
-      addItem(data);
+      await addItem(data);
       showSuccess(t('achievements.manager.addedSuccess'));
     }
 
@@ -132,10 +131,9 @@ export const AchievementManager: React.FC = () => {
     setForm((f) => ({ ...f, coverUrl: dataUrl }));
   };
 
-  const localizedItems = items.map((item) => localizeAchievement(item, t));
   const filteredItems = filterStatus === 'ALL'
-    ? localizedItems
-    : localizedItems.filter((i) => i.status === filterStatus);
+    ? items
+    : items.filter((i) => i.status === filterStatus);
   const pendingCount = items.filter((i) => i.status === 'PENDING').length;
 
   return (

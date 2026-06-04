@@ -224,7 +224,7 @@
   },
   "achievements": {
     "title": "Ibyagezweho",
-    "subtitle": "Intego, amafoto, ubuhamya, n'amakuru y'ubuministry.",
+    "subtitle": "Amafoto, ubuhamya, n'amakuru y'ubuministry.",
     "filterKind": "Ubwoko bw'ibirimo",
     "readStory": "Soma byinshi",
     "readMore": "Soma byinshi",
@@ -232,7 +232,6 @@
     "gallery": "Amafoto",
     "tags": "Tags",
     "story": "Inkuru",
-    "milestone": "Intego",
     "testimony": "Ubuhamya",
     "news": "Amakuru",
     "noItems": "Nta byagezweho byabonetse.",

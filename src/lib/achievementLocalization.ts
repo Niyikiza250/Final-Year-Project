@@ -10,6 +10,7 @@ const achievementTranslationKeyMap: Partial<Record<string, string>> = {
 };
 
 export function localizeAchievement(item: AchievementItem, t: TFunction): AchievementItem {
+  if (item.isCustom) return item;
   const baseKey = achievementTranslationKeyMap[item.id];
   if (!baseKey) return item;
 

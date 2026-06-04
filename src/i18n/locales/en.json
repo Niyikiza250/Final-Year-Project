@@ -224,7 +224,7 @@
   },
   "achievements": {
     "title": "Achievements & stories",
-    "subtitle": "Milestones, galleries, testimonials, and ministry news.",
+    "subtitle": "Galleries, testimonials, and ministry news.",
     "filterKind": "Content type",
     "readStory": "Read more",
     "readMore": "Read more",
@@ -232,7 +232,6 @@
     "gallery": "Gallery",
     "tags": "Tags",
     "story": "Story",
-    "milestone": "Milestone",
     "testimony": "Testimony",
     "news": "News",
     "noItems": "No achievements found.",
